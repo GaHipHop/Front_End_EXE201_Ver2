@@ -2,13 +2,13 @@ import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Button, Checkbox } from "@nextui-org/react";
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
+import {jwtDecode} from 'jwt-decode';
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { checkEmail, postLogin } from "../../lib/service/authService";
 
-const clientId = '389880763269-br8hcrtulhe7kpg91mrkfejj2tfots04.apps.googleusercontent.com'; // Thay YOUR_GOOGLE_CLIENT_ID bằng Client ID của bạn
+const clientId = 'YOUR_GOOGLE_CLIENT_ID'; // Replace with your actual client ID
 
 const Login = () => {
   const navigate = useNavigate();
@@ -74,16 +74,13 @@ const Login = () => {
       const ggtoken = response.credential;
       const decoded = jwtDecode(ggtoken);
   
-      // Kiểm tra và đảm bảo rằng email tồn tại trong dữ liệu đã giải mã
       if (!decoded.email) {
         throw new Error("Email not found in Google token.");
       }
   
       const email = decoded.email;
   
-      // Kiểm tra xem email có tồn tại trong hệ thống của bạn không
       const emailExists = await checkEmail(email);
-      console.log(emailExists)
       if (emailExists) {
         const token = emailExists.data.token;
         const userInfo = {
@@ -108,8 +105,6 @@ const Login = () => {
       console.error("Google Login Error:", error.message);
     }
   };
-  
-  
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
@@ -175,15 +170,35 @@ const Login = () => {
             <Button
               className="bg-gradient-to-r from-pink-500 to-purple-500 text-white py-2 px-8 rounded-full shadow transition duration-300 ease-in-out transform hover:scale-105"
               onClick={handleLogin}
+              disabled={loading}
             >
               {loading ? "Logging in..." : "Login"}
             </Button>
-            <div className="mt-4">
+            <div className="relative flex items-center w-full max-w-sm my-4">
+              <div className="flex-grow border-t border-gray-400"></div>
+              <span className="flex-shrink mx-4 text-gray-400">Or</span>
+              <div className="flex-grow border-t border-gray-400"></div>
+            </div>
+            <div className="w-full max-w-sm">
               <GoogleLogin
                 onSuccess={handleGoogleLoginSuccess}
                 onError={() => {
                   toast.error("Google Login Failed. Please try again.");
                 }}
+                useOneTap
+                render={({ onClick }) => (
+                  <button
+                    className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    onClick={onClick}
+                  >
+                    <img
+                      src="src/assets/image//logo.png" // Replace with your Google icon path
+                      alt="Google icon"
+                      className="mr-3 w-6 h-6"
+                    />
+                    Login with Google
+                  </button>
+                )}
               />
             </div>
           </div>

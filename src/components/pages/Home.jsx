@@ -66,7 +66,7 @@ function Home() {
         alt="Hero Banner"
       />
       <div className="p-6">
-        <h2 className="text-center text-2xl font-bold my-6 font-mr-bedfort text-3xl">Our Collection</h2>
+        <h2 className="text-center text-3xl font-bold my-6 font-mr-bedfort">Our Collection</h2>
         <p className="text-center mb-10 font-light italic">
           Hãy để những đóa hoa nhung kèm và đất sét lưu niệm của chúng tôi thay
           lời muốn nói, mang đến niềm vui và kỷ niệm đẹp cho những người thân yêu

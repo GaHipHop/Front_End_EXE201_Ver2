@@ -6,12 +6,35 @@ import {
   faTiktok,
 } from "@fortawesome/free-brands-svg-icons";
 import { faEnvelope, faPhone } from "@fortawesome/free-solid-svg-icons";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
 import { getAllContacts } from "../../lib/service/contactService";
+
 function PolicyList() {
+  const [open, setOpen] = useState(false);
+  const [modalContent, setModalContent] = useState({ title: "", content: "" });
+
+  const handleOpen = (title, content) => {
+    setModalContent({ title, content });
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
   const policies = [
-    { name: "About products", link: "#" },
-    { name: "Private Policy", link: "#" },
-    { name: "Delivery policy", link: "#" },
+    { name: "About products", content: "Information about our products." },
+    { name: "Private Policy", content: "Details on our privacy policy." },
+    {
+      name: "Delivery policy",
+      content: "Information about our delivery policy.",
+    },
   ];
 
   return (
@@ -20,12 +43,29 @@ function PolicyList() {
       {policies.map((policy, index) => (
         <a
           key={index}
-          href={policy.link}
+          href="#"
+          onClick={(e) => {
+            e.preventDefault();
+            handleOpen(policy.name, policy.content);
+          }}
           className="text-gray-600 hover:underline block font-open-sans"
         >
           {policy.name}
         </a>
       ))}
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle className="bg-gray-100 font-playfair-display-sc text-xl">
+          {modalContent.title}
+        </DialogTitle>
+        <DialogContent className="bg-gray-100 font-open-sans text-base text-gray-700">
+          <p>{modalContent.content}</p>
+        </DialogContent>
+        <DialogActions className="bg-gray-100">
+          <Button onClick={handleClose} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
@@ -151,4 +191,5 @@ function Footer() {
     </footer>
   );
 }
+
 export default Footer;
