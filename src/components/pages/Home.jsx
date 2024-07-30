@@ -1,6 +1,61 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getAllCategory } from '../../lib/service/categoryService';
+import { getAllProductByCategoryId } from '../../lib/service/productService';
 
 function Home() {
+  const [categories, setCategories] = useState([]);
+  const [productsByCategory, setProductsByCategory] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await getAllCategory();
+        setCategories(response.data.data); // Giả định `response.data` chứa danh sách danh mục
+        
+        // Gọi API để lấy sản phẩm cho mỗi danh mục
+        const productFetchPromises = response.data.data.map(async (category) => {
+          try {
+            const productsResponse = await getAllProductByCategoryId(category.id);
+            return { categoryId: category.id, products: productsResponse.data.data };
+          } catch (productError) {
+            console.error(`Error fetching products for category ${category.id}:`, productError);
+            return { categoryId: category.id, products: [] };
+          }
+        });
+
+        const productResults = await Promise.all(productFetchPromises);
+        const productsMap = productResults.reduce((acc, { categoryId, products }) => {
+          acc[categoryId] = products;
+          return acc;
+        }, {});
+        
+        setProductsByCategory(productsMap);
+      } catch (categoryError) {
+        setError(categoryError.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleSeeAll = (categoryId) => {
+    navigate(`/products/${categoryId}`);
+  };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
   return (
     <div className="flex flex-col bg-white">
       <img
@@ -16,30 +71,27 @@ function Home() {
           lời muốn nói, mang đến niềm vui và kỷ niệm đẹp cho những người thân yêu
           của bạn.
         </p>
-        <div className="mb-10 relative">
-          <h3 className="text-xl font-semibold mb-4">Hoa Nhung Kèm</h3>
-          <button className="absolute top-0 right-0 bg-transparent text-black flex items-center">
-            <span className="font-bold">See all</span>
-            <span className="ml-1">→</span>
-          </button>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <img src="https://firebasestorage.googleapis.com/v0/b/gahiphop-4de10.appspot.com/o/images%2F060a9c51-965f-4e16-8c68-46e7b10ab10b_431051779_1457659765169386_9028158111614111585_n.jpg?alt=media&token=6082680b-630e-4852-87f1-3364c7aafc1f" alt="Hoa Nhung Kèm 1" className="w-full" />
-            <img src="https://firebasestorage.googleapis.com/v0/b/gahiphop-4de10.appspot.com/o/images%2F060a9c51-965f-4e16-8c68-46e7b10ab10b_431051779_1457659765169386_9028158111614111585_n.jpg?alt=media&token=6082680b-630e-4852-87f1-3364c7aafc1f" alt="Hoa Nhung Kèm 2" className="w-full" />
-            <img src="https://firebasestorage.googleapis.com/v0/b/gahiphop-4de10.appspot.com/o/images%2F060a9c51-965f-4e16-8c68-46e7b10ab10b_431051779_1457659765169386_9028158111614111585_n.jpg?alt=media&token=6082680b-630e-4852-87f1-3364c7aafc1f" alt="Hoa Nhung Kèm 3" className="w-full" />
+        {categories.map((category) => (
+          <div className="mb-10 relative" key={category.id}>
+            <h3 className="text-xl font-semibold mb-4">{category.categoryName}</h3>
+            <button 
+              className="absolute top-0 right-0 bg-transparent text-black flex items-center"
+              onClick={() => handleSeeAll(category.id)}
+            >
+              <span className="font-bold">See all</span>
+              <span className="ml-1">→</span>
+            </button>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              {productsByCategory[category.id]?.slice(0, 3).map((product) => (
+                <img 
+                  key={product.id}
+                  src={product.image} 
+                  alt={product.productName} 
+                />
+              ))}
+            </div>
           </div>
-        </div>
-        <div className="mb-10 relative">
-          <h3 className="text-xl font-semibold mb-4">Đất Sét</h3>
-          <button className="absolute top-0 right-0 bg-transparent text-black flex items-center">
-            <span className="font-bold">See all</span>
-            <span className="ml-1">→</span>
-          </button>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <img src="https://firebasestorage.googleapis.com/v0/b/gahiphop-4de10.appspot.com/o/images%2F060a9c51-965f-4e16-8c68-46e7b10ab10b_431051779_1457659765169386_9028158111614111585_n.jpg?alt=media&token=6082680b-630e-4852-87f1-3364c7aafc1f" alt="Đất Sét 1" className="w-full" />
-            <img src="https://firebasestorage.googleapis.com/v0/b/gahiphop-4de10.appspot.com/o/images%2F060a9c51-965f-4e16-8c68-46e7b10ab10b_431051779_1457659765169386_9028158111614111585_n.jpg?alt=media&token=6082680b-630e-4852-87f1-3364c7aafc1f" alt="Đất Sét 2" className="w-full" />
-            <img src="https://firebasestorage.googleapis.com/v0/b/gahiphop-4de10.appspot.com/o/images%2F060a9c51-965f-4e16-8c68-46e7b10ab10b_431051779_1457659765169386_9028158111614111585_n.jpg?alt=media&token=6082680b-630e-4852-87f1-3364c7aafc1f" alt="Đất Sét 3" className="w-full" />
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   );

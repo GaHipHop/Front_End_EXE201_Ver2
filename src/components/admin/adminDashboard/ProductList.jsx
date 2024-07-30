@@ -29,8 +29,9 @@ function ProductList() {
       } else {
         response = await getAllAdminByStatusFalse(token);
       }
-      setProducts(response.data.data.result || []);
-      setFilteredProduct(response.data.data.result);
+      setProducts(response.data.data || []);
+      setFilteredProduct(response.data.data);
+      console.log(response.data.data);
     } catch (error) {
       console.error("Error fetching products:", error.message);
       setProducts([]);

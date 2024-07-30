@@ -191,6 +191,9 @@ function TransactionTable({ transactions, onDetailsClick }) {
   return (
     <section className="flex flex-col items-start text-base font-medium tracking-tight text-center text-black max-md:flex-wrap max-md:pr-5">
       <div className="flex justify-between w-full px-2.5 py-2.5 bg-white">
+      <div className="flex-1 flex justify-center items-center">
+          <span>No</span>
+        </div>
         <div className="flex-1 flex justify-center items-center">
           <span>Order Code</span>
         </div>
@@ -219,11 +222,14 @@ function TransactionTableBody({ transactions = [], onDetailsClick }) {
   return (
     <>
       {transactions.length > 0 ? (
-        transactions.map((transaction) => (
+        transactions.map((transaction, index) => (
           <div
             key={transaction.id}
             className="flex justify-between w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap"
           >
+            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
+              {index + 1}
+            </div>
             <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
               {transaction.orderCode}
             </div>

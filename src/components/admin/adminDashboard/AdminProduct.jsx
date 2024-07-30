@@ -26,7 +26,7 @@ function AddProductForm() {
     const fetchCategories = async () => {
       try {
         const response = await getAllCategory();
-        const categories = response.data?.data.result ?? [];
+        const categories = response.data?.data ?? [];
         setCategories(categories);
       } catch (error) {
         toast.error("Error fetching categories");

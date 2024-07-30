@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllProduct } from '../../lib/service/productService';
-import Footer from '../layout/Footer';
 import Header from '../layout/Header';
 
 const formatPrice = (price) => {
@@ -88,7 +87,7 @@ const Product = () => {
         const response = await getAllProduct();
         const data = response.data.data;
         console.log('Fetched Products:', data.result);
-        setProducts(data.result);
+        setProducts(data);
       } catch (error) {
         console.error('Failed to fetch products:', error);
       }

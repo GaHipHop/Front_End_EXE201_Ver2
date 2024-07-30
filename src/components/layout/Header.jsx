@@ -1,16 +1,13 @@
 import { faCartShopping, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Box, IconButton, Modal, Typography } from '@mui/material';
-import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Input } from '@nextui-org/react';
+import { Button, Input } from '@nextui-org/react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllCategory } from '../../lib/service/categoryService';
-import { getAllProductByCategoryId } from '../../lib/service/productService';
 
 const Header = ({ onCategorySelect }) => {
   const [searchOpen, setSearchOpen] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
-  const [categories, setCategories] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -25,21 +22,6 @@ const Header = ({ onCategorySelect }) => {
   const handleBlur = () => {
     setSearchOpen(false);
   };
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await getAllCategory();
-        const data = response.data.data;
-        console.log('Fetched Categories:', data.result);
-        setCategories(data.result);
-      } catch (error) {
-        console.error('Failed to fetch categories:', error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
 
   useEffect(() => {
     if (searchOpen && inputRef.current) {
@@ -59,19 +41,6 @@ const Header = ({ onCategorySelect }) => {
     };
   }, []);
 
-  const handleCategoryClick = async (categoryId) => {
-    try {
-      const response = await getAllProductByCategoryId(categoryId);
-      const products = response.data.data.result;
-      if (onCategorySelect) {
-        onCategorySelect(products);
-      }
-      navigate('/product');
-    } catch (error) {
-      console.error('Failed to fetch products by category:', error);
-    }
-  };
-
   const fetchCartItems = () => {
     try {
       const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
@@ -79,7 +48,6 @@ const Header = ({ onCategorySelect }) => {
       setCartItems(cartItems);
       setTotalPrice(totalPrice);
       setCartItemCount(cartItems.length);
-      console.log(cartItems);
     } catch (error) {
       console.error('Failed to fetch cart items:', error);
     }
@@ -161,30 +129,9 @@ const Header = ({ onCategorySelect }) => {
             alt="Logo"
           />
         </a>
-        <Dropdown>
-          <DropdownTrigger>
-            <Button variant="none">
-              <span className="text-[22px] hover:underline decoration-1">Categories</span>
-            </Button>
-          </DropdownTrigger>
-          <DropdownMenu>
-            {categories.length > 0 ? (
-              categories.map((category) => (
-                <DropdownItem
-                  key={category.id}
-                  onClick={() => handleCategoryClick(category.id)}
-                  textValue={category.categoryName}
-                >
-                  <span className="font-poiret-one text-lg">{category.categoryName}</span>
-                </DropdownItem>
-              ))
-            ) : (
-              <DropdownItem textValue="Không có danh mục nào">
-                <span className="font-poiret-one text-lg">No category.</span>
-              </DropdownItem>
-            )}
-          </DropdownMenu>
-        </Dropdown>
+        <Button variant="none" onClick={() => navigate('/product')}>
+          <span className="text-[22px] hover:underline decoration-1">All Products</span>
+        </Button>
         <a
           href="/about"
           className="block text-[22px] hover:underline hover:decoration-black decoration-1"
@@ -271,17 +218,9 @@ const Header = ({ onCategorySelect }) => {
               </Box>
             ))
           ) : (
-            <Typography variant="body1">no cart item.</Typography>
+            <Typography>Không có sản phẩm nào trong giỏ hàng.</Typography>
           )}
-          <Typography variant="body1">Total Price: {formatCurrency(totalPrice)}</Typography>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}>
-            <Button variant="contained" color="primary" onClick={() => setIsCartOpen(false)}>
-              Close
-            </Button>
-            <Button variant="contained" color="secondary" onClick={() => navigate('/checkout')}>
-              Checkout
-            </Button>
-          </Box>
+          <Typography variant="h6">Tổng: {formatCurrency(totalPrice)}</Typography>
         </Box>
       </Modal>
     </header>

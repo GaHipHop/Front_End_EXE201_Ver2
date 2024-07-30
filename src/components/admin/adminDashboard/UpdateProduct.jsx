@@ -71,7 +71,7 @@ function UpdateProduct() {
     const fetchCategories = async () => {
       try {
         const response = await getAllCategory();
-        const categories = response.data?.data.result ?? [];
+        const categories = response.data?.data ?? [];
         setCategories(categories);
       } catch (error) {
         toast.error("Error fetching categories");
@@ -291,13 +291,20 @@ function UpdateProduct() {
                       </div>
                       <div className="flex items-center mb-2">
                         <label htmlFor={`file-${index}`} className="w-1/4 text-left">File</label>
-                        <input
-                          id={`file-${index}`}
-                          name="file"
-                          type="file"
-                          className="w-3/4 p-2 border rounded"
-                          onChange={(e) => handleKindChange(index, e)}
-                        />
+                        <div className="w-3/4 flex items-center">
+                          <img
+                            src={kind.image}
+                            alt=""
+                            className="w-24 h-24 object-cover mr-2" // Adjust size and margin
+                          />
+                          <input
+                            id={`file-${index}`}
+                            name="file"
+                            type="file"
+                            className="flex-1 p-2 border rounded"
+                            onChange={(e) => handleKindChange(index, e)}
+                          />
+                       </div>
                       </div>
                       <div className="flex justify-between w-full mt-2">
                         <Button onClick={() => removeKind(index)} className="bg-red-600 text-white" size="sm">Remove</Button>

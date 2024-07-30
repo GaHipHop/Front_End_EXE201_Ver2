@@ -27,8 +27,8 @@ function AdminCategory() {
       } else {
         response = await getAllCategoryFalse(token);
       }
-      setCategories(response.data.data.result || []);
-      setFilteredCategory(response.data.data.result);
+      setCategories(response.data.data || []);
+      setFilteredCategory(response.data.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
       setCategories([]);
@@ -232,7 +232,6 @@ function AdminCategory() {
               background-color: #d3d3d3;
               padding: 8px 16px;
               border-radius: 8px;
-              text-transform: uppercase;
               cursor: pointer;
             }
 
@@ -255,8 +254,8 @@ function AdminCategory() {
                 onChange={handleSearch}
               />
               <div className="flex space-x-4">
-                <button className={`custom-button ${currentFilter === 'true' ? 'selected' : ''}`} onClick={() => handleFilterChange('true')}>True</button>
-                <button className={`custom-button ${currentFilter === 'false' ? 'selected' : ''}`} onClick={() => handleFilterChange('false')}>False</button>
+                <button className={`custom-button ${currentFilter === 'true' ? 'selected' : ''}`} onClick={() => handleFilterChange('true')}>Available</button>
+                <button className={`custom-button ${currentFilter === 'false' ? 'selected' : ''}`} onClick={() => handleFilterChange('false')}>Unavailable</button>
               </div>
             </div>
           </div>
@@ -344,8 +343,8 @@ function AdminCategory() {
                         onChange={handleChange}
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                       >
-                        <option value={true}>Active</option>
-                        <option value={false}>Inactive</option>
+                        <option value={true}>Available</option>
+                        <option value={false}>Unavailable</option>
                       </select>
                     </div>
                     <div className="flex items-center justify-between">
