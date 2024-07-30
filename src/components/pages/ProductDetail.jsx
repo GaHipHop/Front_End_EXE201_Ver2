@@ -189,7 +189,6 @@ function ProductDetail() {
 
   return (
     <div className="flex flex-col bg-white min-h-screen">
-      <Header />
       <div className="flex flex-col items-center w-full mt-[5rem] px-4">
         <MainContent productId={productId} onAddToCart={handleAddToCart} setKindId={setKindId} />
         <Button
@@ -203,7 +202,6 @@ function ProductDetail() {
           Add To Cart
         </Button>
       </div>
-      <Footer />
     </div>
   );
 }

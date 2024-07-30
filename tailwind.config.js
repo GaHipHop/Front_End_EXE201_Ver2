@@ -12,7 +12,8 @@ module.exports = {
         'poiret-one': ['"Poiret One"', 'cursive'],
         'plus-jakarta': ['"Plus Jakarta Sans"', 'sans-serif'],
         'open-sans': ['"Open Sans"', 'sans-serif'],
-        'poetsen-one' : ['"Poetsen One"', 'sans-serif']
+        'poetsen-one' : ['"Poetsen One"', 'sans-serif'],
+        'playfair-display-sc': ['"Playfair Display SC"', 'serif']
       },
       linearGradientDirections: {
         t: 'to top',

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllCategory } from '../../lib/service/categoryService';
 import { getAllProductByCategoryId } from '../../lib/service/productService';
+import imgURL from 'src/assets/image/8c93821ba980000b83c02a7320d9bd20e9094bbc6ea1a02acc4ff34996276d85.png';
 
 function Home() {
   const [categories, setCategories] = useState([]);
@@ -60,7 +61,7 @@ function Home() {
     <div className="flex flex-col bg-white">
       <img
         loading="lazy"
-        src="https://cdn.builder.io/api/v1/image/assets/TEMP/8c93821ba980000b83c02a7320d9bd20e9094bbc6ea1a02acc4ff34996276d85?apiKey=402c56a5a1d94d11bd24e7050966bb9d&"
+        src={imgURL}
         className="w-full"
         alt="Hero Banner"
       />
