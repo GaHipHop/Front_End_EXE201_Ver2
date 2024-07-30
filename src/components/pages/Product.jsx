@@ -107,7 +107,7 @@ const Product = () => {
   const [page, setPage] = useState(1);
   const [sortAnchorEl, setSortAnchorEl] = useState(null);
   const [sortedProducts, setSortedProducts] = useState([]);
-  const pageSize = 3;
+  const pageSize = 6;
 
   useEffect(() => {
     const fetchProducts = async () => {
