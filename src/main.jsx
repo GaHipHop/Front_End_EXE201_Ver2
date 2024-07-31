@@ -8,6 +8,7 @@ import AdminManage from "./components/admin/adminDashboard/AdminManage";
 import Contact from "./components/admin/adminDashboard/Contact";
 import Dashboard from "./components/admin/adminDashboard/Dashboard";
 import ProductList from "./components/admin/adminDashboard/ProductList";
+import Profile from "./components/admin/adminDashboard/Profile";
 import Transaction from "./components/admin/adminDashboard/Transaction";
 import UpdateProduct from "./components/admin/adminDashboard/UpdateProduct";
 import About from "./components/pages/About";
@@ -50,6 +51,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/admin/discount" element={<AdminDiscount />} />
         <Route path="/admin/manageAdmin" element={<AdminManage />} />
         <Route path="/admin/contact" element={<Contact />} />
+        <Route path="/admin/profile" element={<Profile />} />
         {/* <Route path="/admin/categories" element={<AdminCategory />} /> */}
       </Routes>
     </BrowserRouter>

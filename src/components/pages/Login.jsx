@@ -97,10 +97,12 @@ const Login = () => {
       if (emailExists) {
         const token = emailExists.data.token;
         const roleId = emailExists.data.loginResponse.roleId;
+        const id = emailExists.data.loginResponse.id;
         const userInfo = {
           email,
           token,
-          roleId
+          roleId,
+          id
         };
         localStorage.setItem("token", token);
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
