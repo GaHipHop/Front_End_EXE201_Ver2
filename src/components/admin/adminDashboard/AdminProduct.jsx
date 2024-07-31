@@ -83,11 +83,11 @@ function AddProductForm() {
       productData.append("DiscountId", product.discountId);
       productData.append("ProductPrice", product.price);
       productData.append("ProductDescription", product.description);
-
+  
       // Create Product
       const productResponse = await postcreateProduct(productData, token);
       const productId = productResponse.data.data.id;
-
+  
       // Create Kinds
       for (let kind of kinds) {
         const kindData = new FormData();
@@ -99,18 +99,34 @@ function AddProductForm() {
         }
         await postcreateKind(kindData, token);
       }
-
+  
       toast.success("Product and kinds created successfully");
     } catch (error) {
-      if (error.response && error.response.data && error.response.data.errors) {
-        setErrors(error.response.data.errors);
-        toast.error("Error creating product or kinds");
+      if (error.response && error.response.data) {
+        const { errors, message } = error.response.data;
+  
+        if (errors) {
+          setErrors(errors);
+          for (let key in errors) {
+            if (errors.hasOwnProperty(key)) {
+              errors[key].forEach(errMsg => {
+                toast.error(errMsg);
+              });
+            }
+          }
+        }
+  
+        if (message) {
+          toast.error(message);
+          console.log(message); // Confirm that the message is correctly received
+        }
       } else {
         toast.error("An unexpected error occurred");
         console.error("Error creating product or kinds:", error);
       }
     }
   };
+  
 
   return (
     <>
@@ -192,7 +208,7 @@ function AddProductForm() {
                   id="description"
                   name="description"
                   className="w-2/4 p-2 border rounded"
-                  placeholder="1,2,3,..."
+                  placeholder="Product description..."
                   value={product.description}
                   onChange={handleProductChange}
                 ></textarea>

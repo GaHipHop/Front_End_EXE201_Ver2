@@ -1,9 +1,9 @@
+import TuneIcon from '@mui/icons-material/Tune';
+import { IconButton, Menu, MenuItem, Pagination, Stack } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAllProduct } from '../../lib/service/productService';
 import Header from '../layout/Header';
-import { Pagination, Stack, IconButton, Menu, MenuItem } from '@mui/material';
-import TuneIcon from '@mui/icons-material/Tune';
 
 const formatPrice = (price) => {
   return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
@@ -107,7 +107,7 @@ const Product = () => {
   const [page, setPage] = useState(1);
   const [sortAnchorEl, setSortAnchorEl] = useState(null);
   const [sortedProducts, setSortedProducts] = useState([]);
-  const pageSize = 6;
+  const pageSize = 2;
 
   useEffect(() => {
     const fetchProducts = async () => {

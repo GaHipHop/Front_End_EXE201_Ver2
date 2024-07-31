@@ -48,8 +48,17 @@ const deletetDiscount = async (id, token) => {
   return await axios.delete(`Discount/DeleteDiscount/${id}`, config);
 };
 
+const availableDiscount = async (id, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return await axios.delete(`Discount/AvailableDiscount/${id}`, config);
+};
+
 export {
-  GetDiscountBy, deletetDiscount, getAllDiscount, getAllDiscountFalse, postcreateDiscount,
+  GetDiscountBy, availableDiscount, deletetDiscount, getAllDiscount, getAllDiscountFalse, postcreateDiscount,
   updateDiscount
 };
 

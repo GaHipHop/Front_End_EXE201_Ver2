@@ -5,24 +5,10 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getAllCategory } from "../../../lib/service/categoryService";
 import { getAllDiscount } from "../../../lib/service/discountService";
-import { postcreateKind, updateKind } from "../../../lib/service/kindService";
+import { deleteKind, postcreateKind, updateKind } from "../../../lib/service/kindService";
 import { GetProductById, updateProduct } from "../../../lib/service/productService";
 import AdminHeader from "../adminLayout/AdminHeader";
 import Sidebar from "../adminLayout/Sidebar";
-
-/**
- * @typedef {Object} Category
- * @property {number} id
- * @property {string} categoryName
- */
-
-/**
- * @typedef {Object} Discount
- * @property {number} id
- * @property {number} percent
- * @property {string} expiredDate
- * @property {boolean} status
- */
 
 function UpdateProduct() {
   const location = useLocation();
@@ -114,8 +100,21 @@ function UpdateProduct() {
     setKinds([...kinds, { id: null, colorName: "", quantity: "", file: null }]);
   };
 
-  const removeKind = (index) => {
-    setKinds(kinds.filter((_, i) => i !== index));
+  const removeKind = async (index) => {
+    if (window.confirm("Are you sure you want to delete this kind?")) {
+      const kind = kinds[index];
+      if (kind.id) {
+        try {
+          const token = localStorage.getItem('token');
+          await deleteKind(kind.id, token);
+          toast.success("Kind deleted successfully");
+        } catch (error) {
+          toast.error("Error deleting kind");
+          console.error("Error deleting kind:", error);
+        }
+      }
+      setKinds(kinds.filter((_, i) => i !== index));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -154,7 +153,11 @@ function UpdateProduct() {
       }
 
       toast.success("Product and kinds updated successfully");
-      navigate('/admin/manageProducts');
+
+      setTimeout(() => {
+        navigate('/admin/manageProducts');
+      }, 5000);
+
     } catch (error) {
       if (error.response && error.response.status === 401) {
         toast.error("Unauthorized access. Please log in again.");
@@ -198,7 +201,6 @@ function UpdateProduct() {
                         onChange={handleProductChange}
                       />
                     </div>
-                    {errors.ProductName && <p className="text-red-500">{errors.ProductName}</p>}
                   </div>
                   <div className="flex flex-col px-2.5 py-2.5 bg-white">
                     <div className="flex items-center mb-2">
@@ -215,7 +217,6 @@ function UpdateProduct() {
                         ))}
                       </select>
                     </div>
-                    {errors.CategoryId && <p className="text-red-500">{errors.CategoryId}</p>}
                   </div>
                   <div className="flex flex-col px-2.5 py-2.5 bg-white">
                     <div className="flex items-center mb-2">
@@ -232,7 +233,6 @@ function UpdateProduct() {
                         ))}
                       </select>
                     </div>
-                    {errors.DiscountId && <p className="text-red-500">{errors.DiscountId}</p>}
                   </div>
                   <div className="flex flex-col px-2.5 py-2.5 bg-white">
                     <div className="flex items-center mb-2">
@@ -261,7 +261,6 @@ function UpdateProduct() {
                         onChange={handleProductChange}
                       ></textarea>
                     </div>
-                    {errors.ProductDescription && <p className="text-red-500">{errors.ProductDescription}</p>}
                   </div>
                   <h2 className="text-left text-pink-500 mb-4">Add Kinds</h2>
                   {kinds.map((kind, index) => (
@@ -295,7 +294,7 @@ function UpdateProduct() {
                           <img
                             src={kind.image}
                             alt=""
-                            className="w-24 h-24 object-cover mr-2" // Adjust size and margin
+                            className="w-24 h-24 object-cover mr-2"
                           />
                           <input
                             id={`file-${index}`}
@@ -304,7 +303,7 @@ function UpdateProduct() {
                             className="flex-1 p-2 border rounded"
                             onChange={(e) => handleKindChange(index, e)}
                           />
-                       </div>
+                        </div>
                       </div>
                       <div className="flex justify-between w-full mt-2">
                         <Button onClick={() => removeKind(index)} className="bg-red-600 text-white" size="sm">Remove</Button>

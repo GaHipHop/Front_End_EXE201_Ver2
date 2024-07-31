@@ -28,12 +28,7 @@ const AdminHeader = ({ title, extraContent }) => {
         <div className="flex items-center">
           <span className="text-lg font-semibold text-gray-700 mr-4">{userName}</span>
           <div className="flex items-center">
-            <img
-              src="https://firebasestorage.googleapis.com/v0/b/gahiphop-4de10.appspot.com/o/images%2F0d1eceab-90ac-4889-a944-be364b08e3cb_GaHipHop.jpg?alt=media&token=fd839dec-ff8f-4f9f-8b5f-f5997475ce6d"
-              alt="User"
-              className="w-10 h-10 rounded-full"
-            />
-            <div className="ml-2 text-lg font-semibold text-gray-700">{userEmail}</div>
+            <div className="ml-2 text-lg font-semibold text-gray-700">Welcome, {userEmail}</div>
           </div>
         </div>
       </div>

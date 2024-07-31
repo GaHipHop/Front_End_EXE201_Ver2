@@ -4,7 +4,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { deleteCategory, getAllCategory, getAllCategoryFalse, GetCategoryById, postcreateCategory, updateCategory } from "../../../lib/service/categoryService";
+import { availableCategory, deleteCategory, getAllCategory, getAllCategoryFalse, GetCategoryById, postcreateCategory, updateCategory } from "../../../lib/service/categoryService";
 import AdminHeader from "../adminLayout/AdminHeader";
 import Sidebar from "../adminLayout/Sidebar";
 
@@ -27,12 +27,19 @@ function AdminCategory() {
       } else {
         response = await getAllCategoryFalse(token);
       }
-      setCategories(response.data.data || []);
-      setFilteredCategory(response.data.data);
+
+      if (response.data.status === 404) {
+        setCategories([]);
+        setFilteredCategory([]);
+        toast.error("No available category");
+      } else {
+        setCategories(response.data.data || []);
+        setFilteredCategory(response.data.data);
+      }
     } catch (error) {
       console.error("Error fetching categories:", error);
       setCategories([]);
-      toast.error("Error fetching categories: " + error.message);
+      setFilteredCategory([]);
     }
   };
 
@@ -68,12 +75,17 @@ function AdminCategory() {
     }
 
     try {
-      await deleteCategory(categoryId, token);
+      if (currentFilter === 'true') {
+        await deleteCategory(categoryId, token);
+        toast.success("Category deleted successfully.");
+      } else if (currentFilter === 'false') {
+        await availableCategory(categoryId, token);
+        toast.success("Category set to available successfully.");
+      }
       fetchCategories(currentFilter);
-      toast.success("Category deleted successfully.");
     } catch (error) {
-      console.error("Error deleting category:", error);
-      toast.error("Error deleting category: " + error.message);
+      console.error("Error processing request:", error);
+      toast.error("Error processing request: " + error.message);
     }
   };
 
@@ -176,7 +188,8 @@ function AdminCategory() {
             <span>Action</span>
           </div>
         </div>
-        {categories.map((category, index) => (
+        {categories.length > 0 ? (
+          categories.map((category, index) => (
           <div
             key={index}
             className="relative flex justify-between w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap"
@@ -206,14 +219,19 @@ function AdminCategory() {
                       <UpdateIcon className="mr-2" /> Update
                     </li>
                     <li className="p-2 cursor-pointer flex items-center" onClick={() => handleDelete(category.id)}>
-                      <DeleteIcon className="mr-2" /> Delete
+                      <DeleteIcon className="mr-2" /> {currentFilter === 'true' ? 'Delete' : 'Available'}
                     </li>
                   </ul>
                 </div>
               )}
             </div>
           </div>
-        ))}
+        ))
+      ) : (
+        <div className="flex justify-center w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap">
+          No available category
+        </div>
+      )}
       </section>
     );
   }

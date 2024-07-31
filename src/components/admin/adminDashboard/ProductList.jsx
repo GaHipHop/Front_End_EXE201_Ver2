@@ -1,13 +1,20 @@
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CreateIcon from '@mui/icons-material/Create';
 import DeleteIcon from '@mui/icons-material/Delete';
 import InfoIcon from '@mui/icons-material/Info';
 import UpdateIcon from '@mui/icons-material/Update';
-import { Box, Button, Modal, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, Button, Modal, Pagination, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { deletetProduct, getAllAdminByStatusFalse, getAllProduct, GetProductById } from "../../../lib/service/productService";
+import {
+  availableProduct,
+  deletetProduct,
+  getAllProduct,
+  getAllProductByStatusFalse,
+  GetProductById
+} from "../../../lib/service/productService";
 import AdminHeader from "../adminLayout/AdminHeader";
 import Sidebar from "../adminLayout/Sidebar";
 
@@ -18,6 +25,8 @@ function ProductList() {
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [detailModalOpen, setDetailModalOpen] = useState(false);
   const [currentFilter, setCurrentFilter] = useState('true');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
   const navigate = useNavigate();
 
   const fetchProducts = async (filter) => {
@@ -27,14 +36,21 @@ function ProductList() {
       if (filter === 'true') {
         response = await getAllProduct();
       } else {
-        response = await getAllAdminByStatusFalse(token);
+        response = await getAllProductByStatusFalse(token);
       }
-      setProducts(response.data.data || []);
-      setFilteredProduct(response.data.data);
-      console.log(response.data.data);
+
+      if (response.data.status === 404) {
+        setProducts([]);
+        setFilteredProduct([]);
+        toast.error("No products found");
+      } else {
+        setProducts(response.data.data || []);
+        setFilteredProduct(response.data.data);
+      }
     } catch (error) {
       console.error("Error fetching products:", error.message);
       setProducts([]);
+      setFilteredProduct([]);
     }
   };
 
@@ -48,6 +64,7 @@ function ProductList() {
       product.productName.toLowerCase().includes(searchTerm)
     );
     setFilteredProduct(filtered);
+    setPage(1); // Reset to first page after search
   };
 
   const handleDropdownClick = (product) => {
@@ -74,12 +91,17 @@ function ProductList() {
       navigate('/admin/updateProducts', { state: { product: productToUpdate } });
     } else if (action === 'Delete') {
       try {
-        await deletetProduct(selectedProduct.id, token);
-        toast.success("Product deleted successfully");
+        if (currentFilter === 'true') {
+          await deletetProduct(selectedProduct.id, token);
+          toast.success("Product deleted successfully");
+        } else if (currentFilter === 'false') {
+          await availableProduct(selectedProduct.id, token);
+          toast.success("Product set to available successfully");
+        }
         fetchProducts(currentFilter);
       } catch (error) {
-        toast.error("Error deleting product");
-        console.error("Error deleting product:", error);
+        toast.error("Error processing request");
+        console.error("Error processing request:", error);
       }
     }
     setDropdownVisible(false);
@@ -97,8 +119,13 @@ function ProductList() {
     navigate('/admin/createProducts');
   };
 
-  function ProductTable({ products = [] }) {
+  const handlePageChange = (event, value) => {
+    setPage(value);
+  };
 
+  const paginatedProducts = filteredProduct.slice((page - 1) * pageSize, page * pageSize);
+
+  function ProductTable({ products = [] }) {
     return (
       <section className="flex flex-col items-start text-base font-medium tracking-tight text-center text-black max-md:flex-wrap max-md:pr-5">
         <div className="flex justify-between w-full px-2.5 py-2.5 bg-white">
@@ -128,7 +155,7 @@ function ProductList() {
             className="flex justify-between w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap"
           >
             <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              {index + 1}
+              {index + 1 + (page - 1) * pageSize}
             </div>
             <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
               {product.id}
@@ -169,6 +196,11 @@ function ProductList() {
                           <DeleteIcon className="mr-2" /> Delete
                         </li>
                       </>
+                    )}
+                    {currentFilter === 'false' && (
+                      <li className="p-2 cursor-pointer flex items-center" onClick={() => handleAction('Delete')}>
+                        <CheckCircleIcon className="mr-2" /> Available
+                      </li>
                     )}
                   </ul>
                 </div>
@@ -326,7 +358,6 @@ function ProductList() {
              background-color: #d3d3d3;
              padding: 8px 16px;
              border-radius: 8px;
-             text-transform: uppercase;
              cursor: pointer;
             } 
 
@@ -350,8 +381,8 @@ function ProductList() {
                 onChange={handleSearch}
               />
               <div className="flex space-x-4">
-                <Button className={`custom-button ${currentFilter === 'true' ? 'selected' : ''}`} onClick={() => handleFilterChange('true')}>True</Button>
-                <Button className={`custom-button ${currentFilter === 'false' ? 'selected' : ''}`} onClick={() => handleFilterChange('false')}>False</Button>
+                <Button className={`custom-button ${currentFilter === 'true' ? 'selected' : ''}`} onClick={() => handleFilterChange('true')}>Available</Button>
+                <Button className={`custom-button ${currentFilter === 'false' ? 'selected' : ''}`} onClick={() => handleFilterChange('false')}>UnAvailable</Button>
               </div>
             </div>
           </div>
@@ -364,8 +395,18 @@ function ProductList() {
             >
               Create
             </Button>
-            <ProductTable products={filteredProduct} />
+            <ProductTable products={paginatedProducts} />
           </div>
+          <Stack spacing={3} className="mt-8" direction="row" justifyContent="center">
+            <Pagination
+              count={Math.ceil(filteredProduct.length / pageSize)}
+              page={page}
+              onChange={handlePageChange}
+              siblingCount={1}
+              boundaryCount={1}
+              showFirstButton showLastButton
+            />
+          </Stack>
         </section>
       </main>
       <ProductDetailModal product={selectedProduct} open={detailModalOpen} onClose={handleCloseModal} />

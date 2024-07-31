@@ -54,9 +54,17 @@ const deleteCategory = async (id, token) => {
   return await axios.delete(`Category/DeleteCategory/${id}`, config);
 };
 
+const availableCategory = async (id, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return await axios.delete(`Category/AvailableCategory/${id}`, config);
+};
+
 export {
-  GetCategoryById,
-  deleteCategory,
+  GetCategoryById, availableCategory, deleteCategory,
   getAllCategory,
   getAllCategoryFalse,
   postcreateCategory,

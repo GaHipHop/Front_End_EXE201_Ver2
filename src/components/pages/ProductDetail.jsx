@@ -6,8 +6,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { postCart } from '../../lib/service/cartService'; // Import dịch vụ giỏ hàng
 import { GetKindById } from '../../lib/service/kindService';
 import { GetProductById } from '../../lib/service/productService';
-import Footer from "../layout/Footer";
-import Header from "../layout/Header";
 
 function KindList({ kinds, onKindClick }) {
   return (
@@ -140,7 +138,11 @@ function MainContent({ productId, onAddToCart, setKindId }) {
                     <span className="font-bold text-gray-900">{product.productPrice}đ</span>
                   )}
                 </p>
-                <p className="mt-1 text-gray-700">Discount: {product.discount.percent}% - until {new Date(product.discount.expiredDate).toLocaleDateString()}</p>
+                {product.discount.percent > 0 && (
+                  <p className="mt-1 text-gray-700">
+                    Discount: {product.discount.percent}% - until {new Date(product.discount.expiredDate).toLocaleDateString()}
+                  </p>
+                )}
                 <p className="mt-1 text-gray-700">Color: {kind.colorName}</p>
                 <p className="mt-1 text-gray-700">Available: {kind.quantity}</p>
                 <p className="pt-6 pb-2 mt-10 border-b border-gray-300 max-md:mt-8">

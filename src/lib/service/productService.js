@@ -3,7 +3,7 @@ const getAllProduct = async () => {
   return await axios.get(`Product/GetAllProduct`);
 };
 
-const getAllAdminByStatusFalse = async (token) => {
+const getAllProductByStatusFalse = async (token) => {
   const config = {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -62,8 +62,17 @@ const deletetProduct = async (id, token) => {
   return await axios.delete(`Product/DeleteProduct/${id}`, config);
 };
 
+const availableProduct = async (id, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return await axios.delete(`Product/AvailableProduct/${id}`, config);
+};
+
 export {
-  GetProductById, deletetProduct, getAllAdminByStatusFalse, getAllProduct, getAllProductByCategoryId, postcreateProduct,
+  GetProductById, availableProduct, deletetProduct, getAllProduct, getAllProductByCategoryId, getAllProductByStatusFalse, postcreateProduct,
   updateProduct
 };
 

@@ -47,8 +47,13 @@ const updateKind = async (id, data, token) => {
   }
 };
 
-const deleteKind = async (id) => {
-  return await axios.delete(`Kind/DeleteKind/${id}`);
+const deleteKind = async (id, token) => {
+  const config = {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
+  return await axios.delete(`Kind/DeleteKind/${id}`, config);
 };
 
 export {

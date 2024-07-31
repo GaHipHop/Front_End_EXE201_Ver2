@@ -4,7 +4,7 @@ import UpdateIcon from '@mui/icons-material/Update';
 import React, { useEffect, useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { deletetDiscount, getAllDiscount, getAllDiscountFalse, GetDiscountBy, postcreateDiscount, updateDiscount } from "../../../lib/service/discountService";
+import { availableDiscount, deletetDiscount, getAllDiscount, getAllDiscountFalse, GetDiscountBy, postcreateDiscount, updateDiscount } from "../../../lib/service/discountService";
 import AdminHeader from "../adminLayout/AdminHeader";
 import Sidebar from "../adminLayout/Sidebar";
 
@@ -28,12 +28,19 @@ function AdminDiscount() {
       } else {
         response = await getAllDiscountFalse(token);
       }
-      setDiscounts(response.data.data || []);
-      setFilteredDiscount(response.data.data);
+
+      if (response.data.status === 404) {
+        setDiscounts([]);
+        setFilteredDiscount([]);
+        toast.error("No discount available");
+      } else {
+        setDiscounts(response.data.data || []);
+        setFilteredDiscount(response.data.data);
+      }
     } catch (error) {
       console.error("Error fetching discounts:", error);
       setDiscounts([]);
-      toast.error("Error fetching discounts: " + error.message);
+      setFilteredDiscount([]);
     }
   };
 
@@ -55,7 +62,6 @@ function AdminDiscount() {
       const token = localStorage.getItem('token');
       const response = await GetDiscountBy(discountId, token);
       const discountData = response.data.data;
-      // Định dạng ngày trước khi đặt vào state
       discountData.expiredDate = new Date(discountData.expiredDate).toISOString().split('T')[0];
       setSelectedDiscount(discountData);
       setShowPopup(true);
@@ -74,12 +80,17 @@ function AdminDiscount() {
     }
 
     try {
-      await deletetDiscount(discountId, token);
+      if (currentFilter === 'true') {
+        await deletetDiscount(discountId, token);
+        toast.success("Discount deleted successfully.");
+      } else if (currentFilter === 'false') {
+        await availableDiscount(discountId, token);
+        toast.success("Discount set to available successfully.");
+      }
       fetchDiscounts(currentFilter);
-      toast.success("Discount deleted successfully.");
     } catch (error) {
-      console.error("Error deleting discount:", error);
-      toast.error("Error deleting discount: " + error.message);
+      console.error("Error processing request:", error);
+      toast.error("Error processing request: " + error.message);
     }
   };
 
@@ -188,7 +199,8 @@ function AdminDiscount() {
             <span>Action</span>
           </div>
         </div>
-        {discounts.map((discount, index) => (
+        {discounts.length > 0 ? (
+          discounts.map((discount, index) => (
           <div
             key={index}
             className="relative flex justify-between w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap"
@@ -217,18 +229,25 @@ function AdminDiscount() {
                   }}
                 >
                   <ul>
-                    <li className="p-2 cursor-pointer flex items-center" onClick={() => handleUpdate(discount.id)}>
-                      <UpdateIcon className="mr-2" /> Update
-                    </li>
+                    {currentFilter === 'true' && (
+                      <li className="p-2 cursor-pointer flex items-center" onClick={() => handleUpdate(discount.id)}>
+                        <UpdateIcon className="mr-2" /> Update
+                      </li>
+                    )}
                     <li className="p-2 cursor-pointer flex items-center" onClick={() => handleDelete(discount.id)}>
-                      <DeleteIcon className="mr-2" /> Delete
+                      <DeleteIcon className="mr-2" /> {currentFilter === 'true' ? 'Delete' : 'Available'}
                     </li>
                   </ul>
                 </div>
               )}
             </div>
           </div>
-        ))}
+        ))
+      ) : (
+        <div className="flex justify-center w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap">
+          No discount available
+        </div>
+      )}
       </section>
     );
   }
@@ -247,7 +266,6 @@ function AdminDiscount() {
               background-color: #d3d3d3;
               padding: 8px 16px;
               border-radius: 8px;
-              text-transform: uppercase;
               cursor: pointer;
             }
 
@@ -270,8 +288,8 @@ function AdminDiscount() {
                 onChange={handleSearch}
               />
               <div className="flex space-x-4">
-                <button className={`custom-button ${currentFilter === 'true' ? 'selected' : ''}`} onClick={() => handleFilterChange('true')}>True</button>
-                <button className={`custom-button ${currentFilter === 'false' ? 'selected' : ''}`} onClick={() => handleFilterChange('false')}>False</button>
+                <button className={`custom-button ${currentFilter === 'true' ? 'selected' : ''}`} onClick={() => handleFilterChange('true')}>Available</button>
+                <button className={`custom-button ${currentFilter === 'false' ? 'selected' : ''}`} onClick={() => handleFilterChange('false')}>UnAvailable</button>
               </div>
             </div>
           </div>

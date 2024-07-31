@@ -1,43 +1,62 @@
 import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Button, Checkbox } from "@nextui-org/react";
+import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import { Button } from "@nextui-org/react";
 import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import {jwtDecode} from 'jwt-decode';
-import React, { useState } from "react";
+import { jwtDecode } from 'jwt-decode';
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { checkEmail, postLogin } from "../../lib/service/authService";
+import { checkEmail, forgotPassword, postLogin, resetPassword, verifyOtp } from "../../lib/service/authService";
 
-const clientId = 'YOUR_GOOGLE_CLIENT_ID'; // Replace with your actual client ID
+const clientId = '389880763269-br8hcrtulhe7kpg91mrkfejj2tfots04.apps.googleusercontent.com'; // Replace with your actual client ID
 
 const Login = () => {
   const navigate = useNavigate();
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-    isRemember: false,
-  });
-
+  const [formData, setFormData] = useState({ username: "", password: "" });
   const [loading, setLoading] = useState(false);
+  const [openForgotPassword, setOpenForgotPassword] = useState(false);
+  const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
+  const [openOtpDialog, setOpenOtpDialog] = useState(false); 
+  const [otp, setOtp] = useState("");
+  const [openResetPasswordDialog, setOpenResetPasswordDialog] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [countdown, setCountdown] = useState(60);
 
   const login = (userInfo) => {
     console.log("User logged in:", userInfo);
   };
 
   const handleDataChange = (key, value) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      [key]: value,
-    }));
+    setFormData((prevData) => ({ ...prevData, [key]: value }));
   };
+
+  useEffect(() => {
+    let timer;
+    if (openOtpDialog) {
+      timer = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev > 0) {
+            return prev - 1;
+          } else {
+            clearInterval(timer);
+            return 0;
+          }
+        });
+      }, 1000);
+    }
+
+    // Clear the timer when the dialog is closed or when the countdown reaches 0
+    return () => clearInterval(timer);
+  }, [openOtpDialog]);
+
 
   const handleLogin = async () => {
     setLoading(true);
-
     try {
       const response = await postLogin(formData);
       const { token, loginResponse } = response.data.data;
-
       const userInfo = {
         id: loginResponse.id,
         username: loginResponse.userName,
@@ -46,13 +65,10 @@ const Login = () => {
         email: loginResponse.email,
         token: token,
       };
-
       localStorage.setItem("token", token);
       localStorage.setItem("userInfo", JSON.stringify(userInfo));
-
       login(userInfo);
       toast.success("Login Successful");
-
       setTimeout(() => {
         if (loginResponse.roleId === 1) {
           navigate("/admin/Dashboard");
@@ -73,27 +89,23 @@ const Login = () => {
     try {
       const ggtoken = response.credential;
       const decoded = jwtDecode(ggtoken);
-  
       if (!decoded.email) {
         throw new Error("Email not found in Google token.");
       }
-  
       const email = decoded.email;
-  
       const emailExists = await checkEmail(email);
       if (emailExists) {
         const token = emailExists.data.token;
+        const roleId = emailExists.data.loginResponse.roleId;
         const userInfo = {
           email,
           token,
+          roleId
         };
-  
         localStorage.setItem("token", token);
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
-  
         login(userInfo);
         toast.success("Google Login Successful");
-  
         setTimeout(() => {
           navigate("/admin/Dashboard");
         }, 1000);
@@ -106,6 +118,66 @@ const Login = () => {
     }
   };
 
+  const handleOpenForgotPassword = () => {
+    setOpenForgotPassword(true);
+  };
+
+  const handleCloseForgotPassword = () => {
+    setOpenForgotPassword(false);
+  };
+
+  const handleForgotPasswordSubmit = () => {
+    forgotPassword(forgotPasswordEmail)
+      .then((response) => {
+        if (response && response.data && response.data.data) {
+          const tokenForgot = response.data.data.token;
+          localStorage.setItem("tokenForgot", tokenForgot);
+          toast.success("Please check your email for OTP.");
+          handleCloseForgotPassword();
+          setOpenOtpDialog(true);
+        } else {
+          throw new Error("Unexpected response structure.");
+        }
+      })
+      .catch((error) => {
+        toast.error("Failed to send OTP email.");
+        console.error("Forgot Password Error:", error);
+      });
+  };
+
+  const handleOtpSubmit = () => {
+    const tokenForgot = localStorage.getItem("tokenForgot");
+    verifyOtp(forgotPasswordEmail, otp, tokenForgot)
+      .then(() => {
+        toast.success("OTP Verified. You can now reset your password.");
+        setOpenOtpDialog(false);
+        setOpenResetPasswordDialog(true);
+      })
+      .catch((error) => {
+        toast.error("OTP verification failed.");
+        console.error("OTP Verification Error:", error);
+      });
+    setOpenOtpDialog(false);
+  };
+
+  const handleResetPasswordSubmit = () => {
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match. Please try again.");
+      return;
+    }
+  
+    resetPassword(forgotPasswordEmail, newPassword)
+      .then(() => {
+        toast.success("Password reset successfully.");
+        setOpenResetPasswordDialog(false);
+      })
+      .catch((error) => {
+        toast.error("Password reset failed.");
+        console.error("Password Reset Error:", error);
+      });
+  };
+  
+
   return (
     <GoogleOAuthProvider clientId={clientId}>
       <section className="flex overflow-hidden relative flex-col justify-center items-center px-16 py-20 min-h-screen max-md:px-5">
@@ -116,7 +188,7 @@ const Login = () => {
           className="object-cover absolute inset-0 w-full h-full"
           style={{ zIndex: -1 }}
         />
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-2xl bg-pink-100 bg-opacity-80 p-8 rounded-lg shadow-lg">
+        <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-2xl bg-pink-100 bg-opacity-80 p-8 rounded-lg shadow-lg" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
           <div className="flex flex-col items-center justify-center w-full md:w-1/2 p-4">
             <img
               src="/src/assets/image/logo.png"
@@ -154,18 +226,8 @@ const Login = () => {
                 className="pl-10 p-2 border rounded-full w-full shadow"
               />
             </div>
-            <div className="relative w-full max-w-sm mb-4 ml-8 flex items-center">
-              <Checkbox
-                id="rememberMe"
-                defaultChecked={formData.isRemember}
-                onChange={(e) =>
-                  handleDataChange("isRemember", e.target.checked)
-                }
-                className="mr-1"
-              />
-              <label htmlFor="rememberMe" className="text-gray-700 mb-1">
-                Remember Me
-              </label>
+            <div className="w-full max-w-sm mt-4 flex justify-end" style={{marginTop: 0, marginBottom: 10}}>
+              <a href="#" onClick={handleOpenForgotPassword} className="text-gray-500 hover:underline">Forgot Password?</a>
             </div>
             <Button
               className="bg-gradient-to-r from-pink-500 to-purple-500 text-white py-2 px-8 rounded-full shadow transition duration-300 ease-in-out transform hover:scale-105"
@@ -192,7 +254,7 @@ const Login = () => {
                     onClick={onClick}
                   >
                     <img
-                      src="src/assets/image//logo.png" // Replace with your Google icon path
+                      src="/src/assets/image/google-icon.png" // Ensure the correct path to the image
                       alt="Google icon"
                       className="mr-3 w-6 h-6"
                     />
@@ -204,6 +266,82 @@ const Login = () => {
           </div>
         </div>
       </section>
+
+      <Dialog open={openForgotPassword} onClose={handleCloseForgotPassword}>
+        <DialogTitle>Forgot Password</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="email"
+            label="Email Address"
+            type="email"
+            fullWidth
+            variant="standard"
+            value={forgotPasswordEmail}
+            onChange={(e) => setForgotPasswordEmail(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseForgotPassword}>Cancel</Button>
+          <Button onClick={handleForgotPasswordSubmit}>Submit</Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openOtpDialog} onClose={() => setOpenOtpDialog(false)}>
+        <DialogTitle>Enter OTP</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="otp"
+            label="OTP"
+            type="text"
+            fullWidth
+            variant="standard"
+            value={otp}
+            onChange={(e) => setOtp(e.target.value)}
+          />
+          <p>{countdown > 0 ? `Time remaining: ${countdown}s` : "OTP has expired."}</p>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenOtpDialog(false)}>Cancel</Button>
+          <Button onClick={handleOtpSubmit} disabled={countdown === 0}>
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <Dialog open={openResetPasswordDialog} onClose={() => setOpenResetPasswordDialog(false)}>
+        <DialogTitle>Reset Password</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="new-password"
+            label="New Password"
+            type="password"
+            fullWidth
+            variant="standard"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+          />
+          <TextField
+            margin="dense"
+            id="confirm-password"
+            label="Confirm New Password"
+            type="password"
+            fullWidth
+            variant="standard"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenResetPasswordDialog(false)}>Cancel</Button>
+          <Button onClick={handleResetPasswordSubmit}>Submit</Button>
+        </DialogActions>
+      </Dialog>
     </GoogleOAuthProvider>
   );
 };
