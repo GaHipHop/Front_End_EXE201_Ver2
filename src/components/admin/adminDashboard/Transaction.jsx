@@ -101,6 +101,12 @@ function Transaction() {
             .search-and-tabs {
               margin-bottom: 20px; /* Adjust the value to create the desired space */
             }
+            .details-button {
+              color: #EEA4F1;
+              border: 1px solid #EEA4F1; /* Add a border with color EEA4F1 */
+              padding: 4px 12px; /* Add some padding */
+              border-radius: 120px; /* Add some border radius */
+            }
           `}
         </style>
         <section className="flex flex-col px-6 pt-6 mt-4 bg-white border-t border-solid border-black border-opacity-30 max-md:pr-5 max-md:max-w-full">
@@ -190,8 +196,8 @@ function Transaction() {
 function TransactionTable({ transactions, onDetailsClick }) {
   return (
     <section className="flex flex-col items-start text-base font-medium tracking-tight text-center text-black max-md:flex-wrap max-md:pr-5">
-      <div className="flex justify-between w-full px-2.5 py-2.5 bg-white">
-      <div className="flex-1 flex justify-center items-center">
+      <div className="flex justify-between w-full px-4 py-3 bg-white border-b border-gray-300">
+        <div className="flex-1 flex justify-center items-center">
           <span>No</span>
         </div>
         <div className="flex-1 flex justify-center items-center">
@@ -225,7 +231,7 @@ function TransactionTableBody({ transactions = [], onDetailsClick }) {
         transactions.map((transaction, index) => (
           <div
             key={transaction.id}
-            className="flex justify-between w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap"
+            className="flex justify-between w-full px-4 py-3 text-base tracking-tight text-black bg-white max-md:flex-wrap border-b border-gray-300"
           >
             <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
               {index + 1}
@@ -234,7 +240,7 @@ function TransactionTableBody({ transactions = [], onDetailsClick }) {
               {transaction.orderCode}
             </div>
             <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-            {transaction.orderDetails.map(detail => detail.productName).join(', ')}
+              {transaction.orderDetails.map(detail => detail.productName).join(', ')}
             </div>
             <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
               {new Date(transaction.createDate).toLocaleDateString()}
@@ -248,7 +254,7 @@ function TransactionTableBody({ transactions = [], onDetailsClick }) {
             <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
               <Button
                 onClick={(e) => onDetailsClick(e, transaction)}
-                className="text-blue-500"
+                 className="text-[#EEA4F1] details-button"
               >
                 Details
               </Button>
@@ -261,5 +267,6 @@ function TransactionTableBody({ transactions = [], onDetailsClick }) {
     </>
   );
 }
+
 
 export default Transaction;

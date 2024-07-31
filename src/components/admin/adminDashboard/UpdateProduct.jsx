@@ -27,6 +27,7 @@ function UpdateProduct() {
     { id: null, colorName: "", quantity: "", file: null }
   ]);
   const [errors, setErrors] = useState({});
+  const [removedKinds, setRemovedKinds] = useState([]); // New state to track removed kinds
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -100,21 +101,12 @@ function UpdateProduct() {
     setKinds([...kinds, { id: null, colorName: "", quantity: "", file: null }]);
   };
 
-  const removeKind = async (index) => {
-    if (window.confirm("Are you sure you want to delete this kind?")) {
-      const kind = kinds[index];
-      if (kind.id) {
-        try {
-          const token = localStorage.getItem('token');
-          await deleteKind(kind.id, token);
-          toast.success("Kind deleted successfully");
-        } catch (error) {
-          toast.error("Error deleting kind");
-          console.error("Error deleting kind:", error);
-        }
-      }
-      setKinds(kinds.filter((_, i) => i !== index));
+  const removeKind = (index) => {
+    const kind = kinds[index];
+    if (kind.id) {
+      setRemovedKinds([...removedKinds, kind.id]); // Add to removed kinds list
     }
+    setKinds(kinds.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e) => {
@@ -150,6 +142,11 @@ function UpdateProduct() {
         } else {
           await postcreateKind(kindData, token);
         }
+      }
+
+      // Handle Removed Kinds
+      for (let kindId of removedKinds) {
+        await deleteKind(kindId, token);
       }
 
       toast.success("Product and kinds updated successfully");
@@ -306,8 +303,8 @@ function UpdateProduct() {
                         </div>
                       </div>
                       <div className="flex justify-between w-full mt-2">
-                        <Button onClick={() => removeKind(index)} className="bg-red-600 text-white" size="sm">Remove</Button>
-                        <Button onClick={addKind} className="bg-green-600 text-white" size="sm">Add Kind</Button>
+                        <Button onClick={() => removeKind(index)} className="bg-gray-400 text-white" size="sm">Remove</Button>
+                        <Button onClick={addKind} className="bg-gray-400 text-white" size="sm">Add Kind</Button>
                       </div>
                     </div>
                   ))}

@@ -1,15 +1,28 @@
 import { faLock, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  TextField,
+} from "@mui/material";
 import { Button } from "@nextui-org/react";
-import { GoogleLogin, GoogleOAuthProvider } from '@react-oauth/google';
-import { jwtDecode } from 'jwt-decode';
+import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { checkEmail, forgotPassword, postLogin, resetPassword, verifyOtp } from "../../lib/service/authService";
+import {
+  checkEmail,
+  forgotPassword,
+  postLogin,
+  resetPassword,
+  verifyOtp,
+} from "../../lib/service/authService";
 
-const clientId = '389880763269-br8hcrtulhe7kpg91mrkfejj2tfots04.apps.googleusercontent.com'; // Replace with your actual client ID
+const clientId =
+  "389880763269-br8hcrtulhe7kpg91mrkfejj2tfots04.apps.googleusercontent.com";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,7 +30,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [openForgotPassword, setOpenForgotPassword] = useState(false);
   const [forgotPasswordEmail, setForgotPasswordEmail] = useState("");
-  const [openOtpDialog, setOpenOtpDialog] = useState(false); 
+  const [openOtpDialog, setOpenOtpDialog] = useState(false);
   const [otp, setOtp] = useState("");
   const [openResetPasswordDialog, setOpenResetPasswordDialog] = useState(false);
   const [newPassword, setNewPassword] = useState("");
@@ -35,6 +48,7 @@ const Login = () => {
   useEffect(() => {
     let timer;
     if (openOtpDialog) {
+      setCountdown(60); // Reset countdown to 60 seconds whenever the OTP dialog is opened
       timer = setInterval(() => {
         setCountdown((prev) => {
           if (prev > 0) {
@@ -45,12 +59,12 @@ const Login = () => {
           }
         });
       }, 1000);
+    } else {
+      setCountdown(60); // Reset countdown when OTP dialog is closed
     }
 
-    // Clear the timer when the dialog is closed or when the countdown reaches 0
     return () => clearInterval(timer);
   }, [openOtpDialog]);
-
 
   const handleLogin = async () => {
     setLoading(true);
@@ -102,7 +116,7 @@ const Login = () => {
           email,
           token,
           roleId,
-          id
+          id,
         };
         localStorage.setItem("token", token);
         localStorage.setItem("userInfo", JSON.stringify(userInfo));
@@ -112,7 +126,9 @@ const Login = () => {
           navigate("/admin/Dashboard");
         }, 1000);
       } else {
-        toast.error("Email not found in database. Please use another method to login.");
+        toast.error(
+          "Email not found in database. Please use another method to login."
+        );
       }
     } catch (error) {
       toast.error("Google Login Failed. Please try again later.");
@@ -167,7 +183,7 @@ const Login = () => {
       toast.error("Passwords do not match. Please try again.");
       return;
     }
-  
+
     resetPassword(forgotPasswordEmail, newPassword)
       .then(() => {
         toast.success("Password reset successfully.");
@@ -178,11 +194,17 @@ const Login = () => {
         console.error("Password Reset Error:", error);
       });
   };
-  
 
   return (
     <GoogleOAuthProvider clientId={clientId}>
-      <section className="flex overflow-hidden relative flex-col justify-center items-center px-16 py-20 min-h-screen max-md:px-5">
+      <style>
+        {`
+            .custom-input::placeholder {
+              color: white;
+            }
+          `}
+      </style>
+      <section className="flex justify-start items-center overflow-hidden relative px-16 py-20 min-h-screen max-md:px-5">
         <img
           loading="lazy"
           src="/src/assets/image/loginBG.png"
@@ -190,20 +212,16 @@ const Login = () => {
           className="object-cover absolute inset-0 w-full h-full"
           style={{ zIndex: -1 }}
         />
-        <div className="relative z-10 flex flex-col md:flex-row items-center justify-center w-full max-w-2xl bg-pink-100 bg-opacity-80 p-8 rounded-lg shadow-lg" style={{ backgroundColor: 'rgba(255, 255, 255, 0.5)' }}>
-          <div className="flex flex-col items-center justify-center w-full md:w-1/2 p-4">
-            <img
-              src="/src/assets/image/logo.png"
-              alt="Ga Hiphop Logo"
-              className="w-40 h-40 mb-10"
-            />
-            <h1 className="text-5xl font-poiret-one font-medium">Ga Hiphop</h1>
-          </div>
+        <div className="relative z-10 flex flex-col md:flex-row w-full max-w-2xl bg-opacity-80 p-8 rounded-lg shadow-lg" style={{marginBottom: 55, marginLeft: 55}}>
           <div className="h-1 w-full md:h-full md:w-1 bg-black my-4 md:my-0"></div>
           <div className="flex flex-col items-center justify-center w-full md:w-1/2 p-4">
-            <h2 className="text-2xl font-plus-jakarta font-semibold mb-4">
+            <h2
+              className="w-full max-w-sm mt-4 flex justify-end text-4xl font-plus-jakarta font-semibold text-white"
+              style={{ marginLeft: 303, marginBottom: 15 }}
+            >
               Login Here
             </h2>
+
             <div className="relative w-full max-w-sm mb-5">
               <FontAwesomeIcon
                 icon={faUser}
@@ -211,9 +229,16 @@ const Login = () => {
               />
               <input
                 type="text"
-                placeholder="Username"
+                placeholder="Enter your username"
                 onChange={(e) => handleDataChange("username", e.target.value)}
-                className="pl-10 p-2 border rounded-full w-full shadow"
+                className="custom-input pl-10 p-2 rounded shadow bg-transparent"
+                style={{
+                  backgroundColor: "transparent",
+                  color: "white",
+                  width: 432,
+                  height: 55,
+                  border: "1px solid white",
+                }}
               />
             </div>
             <div className="relative w-full max-w-sm mb-5">
@@ -225,20 +250,38 @@ const Login = () => {
                 type="password"
                 placeholder="Password"
                 onChange={(e) => handleDataChange("password", e.target.value)}
-                className="pl-10 p-2 border rounded-full w-full shadow"
+                className="custom-input pl-10 p-2 rounded shadow bg-transparent"
+                style={{
+                  backgroundColor: "transparent",
+                  color: "white",
+                  width: 432,
+                  height: 55,
+                  border: "1px solid white",
+                }}
               />
             </div>
-            <div className="w-full max-w-sm mt-4 flex justify-end" style={{marginTop: 0, marginBottom: 10}}>
-              <a href="#" onClick={handleOpenForgotPassword} className="text-gray-500 hover:underline">Forgot Password?</a>
+            <div
+              className="w-full max-w-sm mt-4 flex justify-end"
+              style={{ marginTop: 0, marginBottom: 10, marginLeft: 304 }}
+            >
+              <a
+                href="#"
+                onClick={handleOpenForgotPassword}
+                className="text-white hover:underline"
+              >
+                Forgot Password?
+              </a>
             </div>
+
             <Button
-              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white py-2 px-8 rounded-full shadow transition duration-300 ease-in-out transform hover:scale-105"
+              className="bg-[#EEA4F1] text-white text-2xl py-2 px-8 shadow transition duration-300 ease-in-out transform hover:scale-105"
               onClick={handleLogin}
               disabled={loading}
+              style={{width:432, height: 55, marginLeft: 150}}
             >
               {loading ? "Logging in..." : "Login"}
             </Button>
-            <div className="relative flex items-center w-full max-w-sm my-4">
+            <div className="relative flex items-center max-w-sm my-4" style={{width: 618, marginLeft: 140}}>
               <div className="flex-grow border-t border-gray-400"></div>
               <span className="flex-shrink mx-4 text-gray-400">Or</span>
               <div className="flex-grow border-t border-gray-400"></div>
@@ -304,7 +347,11 @@ const Login = () => {
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
           />
-          <p>{countdown > 0 ? `Time remaining: ${countdown}s` : "OTP has expired."}</p>
+          <p>
+            {countdown > 0
+              ? `Time remaining: ${countdown}s`
+              : "OTP has expired."}
+          </p>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setOpenOtpDialog(false)}>Cancel</Button>
@@ -314,7 +361,10 @@ const Login = () => {
         </DialogActions>
       </Dialog>
 
-      <Dialog open={openResetPasswordDialog} onClose={() => setOpenResetPasswordDialog(false)}>
+      <Dialog
+        open={openResetPasswordDialog}
+        onClose={() => setOpenResetPasswordDialog(false)}
+      >
         <DialogTitle>Reset Password</DialogTitle>
         <DialogContent>
           <TextField
@@ -340,7 +390,9 @@ const Login = () => {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setOpenResetPasswordDialog(false)}>Cancel</Button>
+          <Button onClick={() => setOpenResetPasswordDialog(false)}>
+            Cancel
+          </Button>
           <Button onClick={handleResetPasswordSubmit}>Submit</Button>
         </DialogActions>
       </Dialog>

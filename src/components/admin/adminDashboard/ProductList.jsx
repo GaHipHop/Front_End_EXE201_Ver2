@@ -128,12 +128,9 @@ function ProductList() {
   function ProductTable({ products = [] }) {
     return (
       <section className="flex flex-col items-start text-base font-medium tracking-tight text-center text-black max-md:flex-wrap max-md:pr-5">
-        <div className="flex justify-between w-full px-2.5 py-2.5 bg-white">
+        <div className="flex justify-between w-full px-4 py-3 bg-white border-b border-gray-300">
           <div className="flex-1 flex justify-center items-center">
             <span>No</span>
-          </div>
-          <div className="flex-1 flex justify-center items-center">
-            <span>Product ID</span>
           </div>
           <div className="flex-1 flex justify-center items-center">
             <span>Product Name</span>
@@ -150,72 +147,70 @@ function ProductList() {
         </div>
         {products.length > 0 ? (
           products.map((product, index) => (
-          <div
-            key={index}
-            className="flex justify-between w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap"
-          >
-            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              {index + 1 + (page - 1) * pageSize}
-            </div>
-            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              {product.id}
-            </div>
-            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              <span>{product.productName}</span>
-            </div>
-            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              <span>{product.stockQuantity}</span>
-            </div>
-            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              <span>{product.currentPrice.toLocaleString('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-              })}</span>
-            </div>
-            <div className="relative flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              <span onClick={() => handleDropdownClick(product)}>...</span>
-              {dropdownVisible && selectedProduct === product && (
-                <div
-                  className="absolute top-full mt-2 shadow-lg border rounded"
-                  style={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e0e0e0',
-                    zIndex: 10
-                  }}
-                >
-                  <ul>
-                    <li className="p-2 cursor-pointer flex items-center" onClick={() => handleAction('Detail')}>
-                      <InfoIcon className="mr-2" /> Detail
-                    </li>
-                    {currentFilter === 'true' && (
-                      <>
-                        <li className="p-2 cursor-pointer flex items-center" onClick={() => handleAction('Update')}>
-                          <UpdateIcon className="mr-2" /> Update
-                        </li>
-                        <li className="p-2 cursor-pointer flex items-center" onClick={() => handleAction('Delete')}>
-                          <DeleteIcon className="mr-2" /> Delete
-                        </li>
-                      </>
-                    )}
-                    {currentFilter === 'false' && (
-                      <li className="p-2 cursor-pointer flex items-center" onClick={() => handleAction('Delete')}>
-                        <CheckCircleIcon className="mr-2" /> Available
+            <div
+              key={index}
+              className="flex justify-between w-full px-4 py-3 text-base tracking-tight text-black bg-white max-md:flex-wrap border-b border-gray-300"
+            >
+              <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
+                {index + 1 + (page - 1) * pageSize}
+              </div>
+              <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
+                <span>{product.productName}</span>
+              </div>
+              <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
+                <span>{product.stockQuantity}</span>
+              </div>
+              <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
+                <span>{product.currentPrice.toLocaleString('vi-VN', {
+                  style: 'currency',
+                  currency: 'VND',
+                })}</span>
+              </div>
+              <div className="relative flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
+                <span onClick={() => handleDropdownClick(product)}>...</span>
+                {dropdownVisible && selectedProduct === product && (
+                  <div
+                    className="absolute top-full mt-2 shadow-lg border rounded"
+                    style={{
+                      backgroundColor: '#ffffff',
+                      border: '1px solid #e0e0e0',
+                      zIndex: 10
+                    }}
+                  >
+                    <ul>
+                      <li className="p-2 cursor-pointer flex items-center" onClick={() => handleAction('Detail')}>
+                        <InfoIcon className="mr-2" /> Detail
                       </li>
-                    )}
-                  </ul>
-                </div>
-              )}
+                      {currentFilter === 'true' && (
+                        <>
+                          <li className="p-2 cursor-pointer flex items-center" onClick={() => handleAction('Update')}>
+                            <UpdateIcon className="mr-2" /> Update
+                          </li>
+                          <li className="p-2 cursor-pointer flex items-center" onClick={() => handleAction('Delete')}>
+                            <DeleteIcon className="mr-2" /> Delete
+                          </li>
+                        </>
+                      )}
+                      {currentFilter === 'false' && (
+                        <li className="p-2 cursor-pointer flex items-center" onClick={() => handleAction('Delete')}>
+                          <CheckCircleIcon className="mr-2" /> Available
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
+          ))
+        ) : (
+          <div className="flex justify-center w-full px-4 py-3 text-base tracking-tight text-black bg-white max-md:flex-wrap border-b border-gray-300">
+            No available product
           </div>
-        ))
-      ) : (
-        <div className="flex justify-center w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap">
-          No available product
-        </div>
-      )}
+        )}
       </section>
     );
   }
+  
 
   function ProductDetailModal({ product, open, onClose }) {
     if (!product) return null;
@@ -359,10 +354,11 @@ function ProductList() {
              padding: 8px 16px;
              border-radius: 8px;
              cursor: pointer;
+             text-transform: none;
             } 
 
             .custom-button.selected {
-             background-color: #f4bbff;
+             background-color: #EEA4F1;
             }
 
             .custom-button:hover {

@@ -69,7 +69,7 @@ function AdminContact() {
   function ContactCard({ contact, isEdit, onInputChange }) {
     return (
       <div className="border rounded p-4 m-2 w-full bg-white shadow grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center">
+        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center overflow-hidden">
           <Phone fontSize="large" className="mb-2" />
           {isEdit ? (
             <input
@@ -80,13 +80,13 @@ function AdminContact() {
               className="w-full p-2 border rounded"
             />
           ) : (
-            <>
+            <div className="w-full">
               <span className="font-bold">Phone: </span>
-              {contact.phone}
-            </>
+              <span className="block truncate">{contact.phone}</span>
+            </div>
           )}
         </div>
-        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center">
+        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center overflow-hidden">
           <Email fontSize="large" className="mb-2" />
           {isEdit ? (
             <input
@@ -97,13 +97,13 @@ function AdminContact() {
               className="w-full p-2 border rounded"
             />
           ) : (
-            <>
+            <div className="w-full">
               <span className="font-bold">Email: </span>
-              {contact.email}
-            </>
+              <span className="block truncate">{contact.email}</span>
+            </div>
           )}
         </div>
-        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center">
+        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center overflow-hidden">
           <Facebook fontSize="large" className="mb-2" />
           {isEdit ? (
             <input
@@ -114,13 +114,13 @@ function AdminContact() {
               className="w-full p-2 border rounded"
             />
           ) : (
-            <>
+            <div className="w-full">
               <span className="font-bold">Facebook: </span>
-              {contact.facebook}
-            </>
+              <span className="block truncate">{contact.facebook}</span>
+            </div>
           )}
         </div>
-        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center">
+        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center overflow-hidden">
           <Instagram fontSize="large" className="mb-2" />
           {isEdit ? (
             <input
@@ -131,13 +131,13 @@ function AdminContact() {
               className="w-full p-2 border rounded"
             />
           ) : (
-            <>
+            <div className="w-full">
               <span className="font-bold">Instagram: </span>
-              {contact.instagram}
-            </>
+              <span className="block truncate">{contact.instagram}</span>
+            </div>
           )}
         </div>
-        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center">
+        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center overflow-hidden">
           <PublicIcon fontSize="large" className="mb-2" />
           {isEdit ? (
             <input
@@ -148,13 +148,13 @@ function AdminContact() {
               className="w-full p-2 border rounded"
             />
           ) : (
-            <>
+            <div className="w-full">
               <span className="font-bold">Tiktok: </span>
-              {contact.tiktok}
-            </>
+              <span className="block truncate">{contact.tiktok}</span>
+            </div>
           )}
         </div>
-        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center">
+        <div className="border rounded p-6 text-center bg-gray-100 flex flex-col items-center overflow-hidden">
           <Store fontSize="large" className="mb-2" />
           {isEdit ? (
             <input
@@ -165,10 +165,10 @@ function AdminContact() {
               className="w-full p-2 border rounded"
             />
           ) : (
-            <>
+            <div className="w-full">
               <span className="font-bold">Shopee: </span>
-              {contact.shoppee}
-            </>
+              <span className="block truncate">{contact.shoppee}</span>
+            </div>
           )}
         </div>
       </div>
@@ -213,7 +213,7 @@ function AdminContact() {
           ) : (
             <button
               onClick={() => handleEdit(contacts[0]?.id)}
-              className="px-4 py-2 bg-blue-500 text-white rounded"
+              className="px-4 py-2 bg-[#EEA4F1] text-white rounded"
             >
               Update
             </button>

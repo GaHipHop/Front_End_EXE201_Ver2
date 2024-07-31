@@ -116,7 +116,7 @@ const Header = ({ onCategorySelect }) => {
 
   return (
     <header
-      className={`flex justify-between items-center px-14 py-5 w-full text-black bg-white border-b border-black max-md:px-5 transition-all duration-300 ease-in-out ${
+      className={`flex justify-between items-center px-14 py-5 w-full text-black bg-white border-b max-md:px-5 transition-all duration-300 ease-in-out ${
         isSticky ? 'fixed top-0 left-0 shadow-lg z-50' : 'fixed z-40'
       }`}
     >
