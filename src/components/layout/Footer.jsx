@@ -31,10 +31,7 @@ function PolicyList() {
   const policies = [
     { name: "About products", content: "Information about our products." },
     { name: "Private Policy", content: "Details on our privacy policy." },
-    {
-      name: "Delivery policy",
-      content: "Information about our delivery policy.",
-    },
+    { name: "Delivery policy",content: "Information about our delivery policy."},
   ];
 
   return (
