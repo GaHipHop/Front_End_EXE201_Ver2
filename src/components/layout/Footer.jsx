@@ -29,10 +29,6 @@ function Footer() {
     fetchContacts();
   }, []);
 
-  // const policies = [
-  //   { name: "About products", content: "Information about our products." },
-  //   { name: "Private Policy", content: "Details on our privacy policy." },
-  //   { name: "Delivery policy",content: "Information about our delivery policy."},
   const socialLinks = [
     {
       icon: faFacebook,
@@ -48,7 +44,7 @@ function Footer() {
     },
     {
       icon: faShoppingCart,
-      link: contact ? contact.shopee : "#",
+      link: contact ? contact.shoppee : "#",
     },
   ];
 
