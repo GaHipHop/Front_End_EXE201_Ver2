@@ -1,10 +1,21 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import imgURL from 'src/assets/image/8c93821ba980000b83c02a7320d9bd20e9094bbc6ea1a02acc4ff34996276d85.png';
-import { getAllCategory } from '../../lib/service/categoryService';
-import { getAllProductByCategoryId } from '../../lib/service/productService';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import imgURL from "src/assets/image/8c93821ba980000b83c02a7320d9bd20e9094bbc6ea1a02acc4ff34996276d85.png";
+import { getAllCategory } from "../../lib/service/categoryService";
+import { getAllProductByCategoryId } from "../../lib/service/productService";
 
-const ProductCard = ({ imgSrc, title, productId }) => {
+const formatPrice = (price) => {
+  return price.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
+};
+
+const ProductCard = ({
+  imgSrc,
+  title,
+  productId,
+  percent,
+  currentPrice,
+  price,
+}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -15,13 +26,37 @@ const ProductCard = ({ imgSrc, title, productId }) => {
     <div
       className="relative flex flex-col w-[65%] max-w-[300px] font-medium tracking-tight text-center text-black bg-white border border-gray-200 shadow-lg rounded-lg mx-2 cursor-pointer transition-transform transform hover:scale-105"
       onClick={handleClick}
-      style={{height:312}}
     >
+      {percent > 0 && (
+        <div className="absolute top-0 left-0 bg-red-500 text-white text-sm px-2 py-1 rounded-tr-lg">
+          {percent}%
+        </div>
+      )}
       <div className="flex justify-center">
-        <img loading="lazy" src={imgSrc} alt={title} className="h-48 w-auto object-contain rounded-t-lg" />
+        <img
+          loading="lazy"
+          src={imgSrc}
+          alt={title}
+          className="w-full h-54 object-cover rounded-t-lg"
+        />
       </div>
-      <div className="flex flex-col px-4 py-4">
+      <div className="flex flex-col px-6 py-6">
         <span className="text-lg font-semibold">{title}</span>
+        <span
+          className={`text-xl ${
+            currentPrice !== price ? "line-through text-gray-500" : "font-bold"
+          }`}
+          style={currentPrice !== price ? { fontSize: "1em" } : {}}
+        >
+          {formatPrice(price)}
+        </span>
+        {currentPrice !== price && (
+          <div className="flex justify-center items-center mt-2">
+            <span className="text-xl text-red-500 font-bold">
+              {formatPrice(currentPrice)}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -38,25 +73,38 @@ function Home() {
     const fetchCategories = async () => {
       try {
         const response = await getAllCategory();
-        setCategories(response.data.data); // Assuming `response.data` contains the category list
-        
+        setCategories(response.data.data); // Assuming response.data contains the category list
+
         // Fetch products for each category
-        const productFetchPromises = response.data.data.map(async (category) => {
-          try {
-            const productsResponse = await getAllProductByCategoryId(category.id);
-            return { categoryId: category.id, products: productsResponse.data.data };
-          } catch (productError) {
-            console.error(`Error fetching products for category ${category.id}:`, productError);
-            return { categoryId: category.id, products: [] };
+        const productFetchPromises = response.data.data.map(
+          async (category) => {
+            try {
+              const productsResponse = await getAllProductByCategoryId(
+                category.id
+              );
+              return {
+                categoryId: category.id,
+                products: productsResponse.data.data,
+              };
+            } catch (productError) {
+              console.error(
+                `Error fetching products for category ${category.id}:`,
+                productError
+              );
+              return { categoryId: category.id, products: [] };
+            }
           }
-        });
+        );
 
         const productResults = await Promise.all(productFetchPromises);
-        const productsMap = productResults.reduce((acc, { categoryId, products }) => {
-          acc[categoryId] = products;
-          return acc;
-        }, {});
-        
+        const productsMap = productResults.reduce(
+          (acc, { categoryId, products }) => {
+            acc[categoryId] = products;
+            return acc;
+          },
+          {}
+        );
+
         setProductsByCategory(productsMap);
       } catch (categoryError) {
         setError(categoryError.message);
@@ -82,30 +130,30 @@ function Home() {
 
   return (
     <div className="flex flex-col bg-white">
-      <img
-        loading="lazy"
-        src={imgURL}
-        className="w-full"
-        alt="Hero Banner"
-      />
+      <img loading="lazy" src={imgURL} className="w-full" alt="Hero Banner" />
       <div className="p-6">
-        <h2 className="text-center text-3xl font-bold my-6 font-mr-bedfort">Our Collection</h2>
+        <h2 className="text-center text-3xl font-bold my-6 font-mr-bedfort">
+          Our Collection
+        </h2>
         <p className="text-center mb-10 font-light italic">
           Hãy để những đóa hoa nhung kèm và đất sét lưu niệm của chúng tôi thay
-          lời muốn nói, mang đến niềm vui và kỷ niệm đẹp cho những người thân yêu
-          của bạn.
+          lời muốn nói, mang đến niềm vui và kỷ niệm đẹp cho những người thân
+          yêu của bạn.
         </p>
         {categories.map((category) => (
           <div className="mb-10 relative" key={category.id}>
-            <h3 className="text-xl font-semibold mb-4 mx-auto" style={{ maxWidth: '80%', textAlign: 'left' }}>
+            <h3
+              className="text-xl font-semibold mb-4 mx-auto"
+              style={{ maxWidth: "80%", textAlign: "left" }}
+            >
               {category.categoryName}
             </h3>
-            <button 
-              className="absolute top-0 right-4 bg-transparent text-black flex items-center" // Adjusted right positioning
+            <button
+              className="absolute top-0 right-4 bg-transparent text-black flex items-center"
               onClick={() => handleSeeAll(category.id)}
             >
               <span className="font-bold">See all</span>
-              <span className="ml-1">→</span>
+              <span className="ml-1" style={{marginRight: 240}}>→</span>
             </button>
             <div className="flex justify-center flex-wrap">
               {productsByCategory[category.id]?.slice(0, 3).map((product) => (
@@ -113,6 +161,13 @@ function Home() {
                   key={product.id}
                   imgSrc={product.image}
                   title={product.productName}
+                  price={product.productPrice}
+                  currentPrice={
+                    product.currentPrice !== 0
+                      ? product.currentPrice
+                      : product.productPrice
+                  }
+                  percent={product.percent ? product.percent : 0}
                   productId={product.id}
                 />
               ))}

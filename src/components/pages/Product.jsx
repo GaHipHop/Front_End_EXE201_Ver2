@@ -1,8 +1,8 @@
 import TuneIcon from '@mui/icons-material/Tune';
 import { IconButton, Menu, MenuItem, Pagination, Stack } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { getAllProduct } from '../../lib/service/productService';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getAllProduct, getAllProductByCategoryId } from '../../lib/service/productService';
 import Header from '../layout/Header';
 
 const formatPrice = (price) => {
@@ -103,17 +103,24 @@ const MainContent = ({ products, page, pageSize, onPageChange, onSortChange, sor
 };
 
 const Product = () => {
+  const { categoryId } = useParams();
   const [products, setProducts] = useState([]);
   const [page, setPage] = useState(1);
   const [sortAnchorEl, setSortAnchorEl] = useState(null);
   const [sortedProducts, setSortedProducts] = useState([]);
-  const pageSize = 2;
+  const pageSize = 6;
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await getAllProduct();
-        const data = response.data.data;
+        let data;
+        if (categoryId) {
+          const response = await getAllProductByCategoryId(categoryId);
+          data = response.data.data;
+        } else {
+          const response = await getAllProduct();
+          data = response.data.data;
+        }
         setProducts(data);
         setSortedProducts(data);
       } catch (error) {
@@ -122,13 +129,7 @@ const Product = () => {
     };
 
     fetchProducts();
-  }, []);
-
-  const handleCategorySelect = (selectedProducts) => {
-    setProducts(selectedProducts);
-    setSortedProducts(selectedProducts);
-    setPage(1);
-  };
+  }, [categoryId]);
 
   const handleMenuOpen = (event) => {
     setSortAnchorEl(event.currentTarget);
@@ -152,14 +153,18 @@ const Product = () => {
     handleMenuClose();
   };
 
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+  };
+
   return (
     <div className="flex flex-col bg-white">
-      <Header onCategorySelect={handleCategorySelect} />
+      <Header />
       <MainContent
         products={sortedProducts}
         page={page}
         pageSize={pageSize}
-        onPageChange={(newPage) => setPage(newPage)}
+        onPageChange={handlePageChange}
         onSortChange={handleSortChange}
         sortAnchorEl={sortAnchorEl}
         handleMenuOpen={handleMenuOpen}

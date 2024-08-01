@@ -98,7 +98,7 @@ function MainContent({ productId, onAddToCart, setKindId }) {
     <main className="px-10 py-4 w-full bg-white border-t border-gray-300 max-md:px-5 max-md:max-w-full">
       {kind && (
         <div className="flex gap-6 max-md:flex-col max-md:gap-4">
-          <div className="flex flex-col w-[40%] max-md:w-full mx-auto">
+          <div className="flex flex-col w-[75%] max-md:w-full mx-auto">
             <div className="flex flex-col grow max-md:mt-8">
               <Link to="/product" className="hover:underline mt-8">
                 <img
@@ -117,10 +117,9 @@ function MainContent({ productId, onAddToCart, setKindId }) {
                   src={kind.image}
                   alt={kind.colorName}
                   className="w-full aspect-[0.8] object-cover rounded-[20px]"
+                  style={{marginBottom: 10}}
                 />
               </div>
-              <p className="mt-4 text-center text-base font-medium text-gray-800">{kind.colorName}</p>
-              <p className="mt-1 text-center text-base text-gray-600">Available: {kind.quantity}</p>
             </div>
             {kinds.length > 0 && <KindList kinds={kinds} onKindClick={handleKindClick} />}
           </div>
