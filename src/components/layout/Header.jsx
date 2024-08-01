@@ -130,17 +130,17 @@ const Header = ({ onCategorySelect }) => {
           />
         </a>
         <Button variant="none" onClick={() => navigate('/product')}>
-          <span className="text-[22px] hover:underline decoration-1">All Products</span>
+          <span className="text-[20px] hover:underline decoration-1 font-bold">All Products</span>
         </Button>
         <a
           href="/about"
-          className="block text-[22px] hover:underline hover:decoration-black decoration-1"
+          className="block text-[20px] hover:underline hover:decoration-black decoration-1 font-bold"
         >
           About Us
         </a>
       </div>
-      <div className="absolute left-1/2 transform -translate-x-1/2 text-[40px] font-medium font-poiret-one">
-        <span className="font-bold">Ga Hiphop</span>
+      <div className="absolute left-1/2 transform -translate-x-1/2 text-[40px] font-medium font-poiret-one font-sans">
+        <span>GaHipHop</span>
       </div>
       <div className="flex items-center space-x-4 relative">
         {searchOpen ? (

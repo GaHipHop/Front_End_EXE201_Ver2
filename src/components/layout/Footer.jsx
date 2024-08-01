@@ -78,7 +78,7 @@ function Footer() {
       <div className="max-w-7xl w-full">
         <div className="my-12 grid grid-cols-1 gap-y-10 sm:grid-cols-6 lg:grid-cols-12">
           {/* Column 1 */}
-          <div className="sm:col-span-6 lg:col-span-5 flex flex-col items-center lg:items-start">
+          <div className="sm:col-span-6 lg:col-span-5 flex flex-col items-center lg:items-start"style={{marginLeft: 100}}>
             <div className="flex flex-shrink-0 items-center">
               <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/0e4339a56fab22957162049c2f58e5884d8d2ea943f28743013a119ef8078b13?apiKey=402c56a5a1d94d11bd24e7050966bb9d&" alt="logo" width={66} height={66} />
             </div>
@@ -96,7 +96,7 @@ function Footer() {
 
           {/* Column 2/3/4 */}
           {products.map((product) => (
-            <div key={product.id} className="sm:col-span-2 flex flex-col items-center lg:items-start">
+            <div key={product.id} className="sm:col-span-1 lg:col-span-3  flex flex-col items-center lg:items-start" style={{marginLeft: 120}}>
               <p className="text-black text-lg font-medium mb-9">{product.section}</p>
               <ul>
                 {product.links.map((link, index) => (

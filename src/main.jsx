@@ -34,7 +34,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
           <Route path="about" element={<About />} />
           <Route path="login" element={<Login />} />
           <Route path="product" element={<Product />} />
-          <Route path="product/:categoryId" element={<Product />} />
+          <Route path="products/:categoryId" element={<Product />} />
           <Route path="productDetail/:productId" element={<ProductDetail />} />
           <Route path="*" element={<NotFound />} />
           <Route path="fail" element={<NotFound />} />
