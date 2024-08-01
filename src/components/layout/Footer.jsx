@@ -3,189 +3,155 @@ import {
   faInstagram,
   faTiktok,
 } from "@fortawesome/free-brands-svg-icons";
-import { faEnvelope, faPhone } from "@fortawesome/free-solid-svg-icons";
+import { faShoppingCart } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-} from "@mui/material";
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
 import React, { useEffect, useState } from "react";
 import { getAllContacts } from "../../lib/service/contactService";
 
-function PolicyList() {
-  const [open, setOpen] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: "", content: "" });
+function Footer() {
+  const [contact, setContact] = useState(null);
+  const [aboutOpen, setAboutOpen] = useState(false);
+  const [currentDialog, setCurrentDialog] = useState('');
 
-  const handleOpen = (title, content) => {
-    setModalContent({ title, content });
-    setOpen(true);
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const response = await getAllContacts();
+        if (response.data && response.data.data.length > 0) {
+          setContact(response.data.data[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching contacts:", error);
+      }
+    };
+
+    fetchContacts();
+  }, []);
+
+  // const policies = [
+  //   { name: "About products", content: "Information about our products." },
+  //   { name: "Private Policy", content: "Details on our privacy policy." },
+  //   { name: "Delivery policy",content: "Information about our delivery policy."},
+  const socialLinks = [
+    {
+      icon: faFacebook,
+      link: contact ? contact.facebook : "#",
+    },
+    {
+      icon: faInstagram,
+      link: contact ? contact.instagram : "#",
+    },
+    {
+      icon: faTiktok,
+      link: contact ? contact.tiktok : "#",
+    },
+    {
+      icon: faShoppingCart,
+      link: contact ? contact.shopee : "#",
+    },
+  ];
+
+  const products = [
+    {
+      id: 1,
+      section: "About",
+      links: [
+        'About Products',
+        'How we work?',
+      ],
+    },
+    {
+      id: 2,
+      section: "Contact",
+      links: contact ? [contact.email, contact.phone] : [],
+    },
+  ];
+
+  const handleDialogOpen = (dialogName) => {
+    setCurrentDialog(dialogName);
+    setAboutOpen(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setAboutOpen(false);
   };
 
-  const policies = [
-    { name: "About products", content: "Information about our products." },
-    { name: "Private Policy", content: "Details on our privacy policy." },
-    { name: "Delivery policy",content: "Information about our delivery policy."},
-  ];
-
   return (
-    <div>
-      <h2 className="text-xl font-plus-jakarta mb-2">Policy</h2>
-      {policies.map((policy, index) => (
-        <a
-          key={index}
-          href="#"
-          onClick={(e) => {
-            e.preventDefault();
-            handleOpen(policy.name, policy.content);
-          }}
-          className="text-gray-600 hover:underline block font-open-sans"
-        >
-          {policy.name}
-        </a>
-      ))}
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle className="bg-gray-100 font-playfair-display-sc text-xl">
-          {modalContent.title}
-        </DialogTitle>
-        <DialogContent className="bg-gray-100 font-open-sans text-base text-gray-700">
-          <p>{modalContent.content}</p>
-        </DialogContent>
-        <DialogActions className="bg-gray-100">
-          <Button onClick={handleClose} color="primary">
-            Close
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
-  );
-}
-
-function Contact() {
-  const [contact, setContact] = useState(null);
-
-  useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const response = await getAllContacts();
-        if (response.data && response.data.data.length > 0) {
-          setContact(response.data.data[0]);
-        }
-      } catch (error) {
-        console.error("Error fetching contacts:", error);
-      }
-    };
-
-    fetchContacts();
-  }, []);
-
-  if (!contact) return <p>Loading contact information...</p>;
-
-  return (
-    <div className="md:mr-4">
-      <h2 className="text-xl font-plus-jakarta mb-2">Contact</h2>
-      <p className="text-gray-600 mb-1 flex items-center font-open-sans">
-        <FontAwesomeIcon
-          icon={faEnvelope}
-          style={{ width: "20px", height: "20px", marginRight: "10px" }}
-        />
-        <a href={`mailto:${contact.email}`} className="hover:underline">
-          {contact.email}
-        </a>
-      </p>
-      <p className="text-gray-600 flex items-center font-open-sans">
-        <FontAwesomeIcon
-          icon={faPhone}
-          style={{ width: "20px", height: "20px", marginRight: "10px" }}
-        />
-        <a href={`tel:${contact.phone}`} className="hover:underline">
-          {contact.phone}
-        </a>
-      </p>
-    </div>
-  );
-}
-
-function EcommerceSocial() {
-  const [contact, setContact] = useState(null);
-
-  useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const response = await getAllContacts();
-        if (response.data && response.data.data.length > 0) {
-          setContact(response.data.data[0]);
-        }
-      } catch (error) {
-        console.error("Error fetching contacts:", error);
-      }
-    };
-
-    fetchContacts();
-  }, []);
-
-  if (!contact) return <p>Loading social links...</p>;
-
-  return (
-    <div className="md:mr-4">
-      <h2 className="text-xl font-plus-jakarta mb-2">Ecommerce</h2>
-      <div className="flex space-x-5">
-        <a href={contact.shoppee} target="_blank" rel="noopener noreferrer">
-          <img
-            src="/src/assets/image/icons8-shopee-50.png"
-            alt="shopee"
-            style={{ width: "20px", height: "20px" }}
-          />
-        </a>
-      </div>
-      <h2 className="text-xl font-plus-jakarta mb-2 mt-px">Social</h2>
-      <div className="flex space-x-5">
-        <a href={contact.facebook} target="_blank" rel="noopener noreferrer">
-          <FontAwesomeIcon
-            icon={faFacebook}
-            style={{ width: "20px", height: "20px" }}
-          />
-        </a>
-        <a href={contact.instagram} target="_blank" rel="noopener noreferrer">
-          <FontAwesomeIcon
-            icon={faInstagram}
-            style={{ width: "20px", height: "20px" }}
-          />
-        </a>
-        <a href={contact.tiktok} target="_blank" rel="noopener noreferrer">
-          <FontAwesomeIcon
-            icon={faTiktok}
-            style={{ width: "20px", height: "20px" }}
-          />
-        </a>
-      </div>
-    </div>
-  );
-}
-
-function Footer() {
-  return (
-    <footer className="bg-white border-t border-gray-300 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-start md:items-center">
-        <div className="flex flex-col md:flex-row md:space-x-4 md:w-full">
-          <div className="flex-1">
-            <PolicyList />
+    <div className="flex justify-center">
+      <div className="max-w-7xl w-full">
+        <div className="my-12 grid grid-cols-1 gap-y-10 sm:grid-cols-6 lg:grid-cols-12">
+          {/* Column 1 */}
+          <div className="sm:col-span-6 lg:col-span-5 flex flex-col items-center lg:items-start">
+            <div className="flex flex-shrink-0 items-center">
+              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/0e4339a56fab22957162049c2f58e5884d8d2ea943f28743013a119ef8078b13?apiKey=402c56a5a1d94d11bd24e7050966bb9d&" alt="logo" width={66} height={66} />
+            </div>
+            <h3 className="text-xs font-medium text-gunmetalgray lh-160 mt-5 mb-4 lg:mb-16 text-center lg:text-left">
+              Your ultimate destination for unique, creative, and stylish gifts and decorations.
+            </h3>
+            <div className="flex gap-4 justify-center lg:justify-start">
+              {socialLinks.map((item, index) => (
+                <a href={item.link} key={index} className="bg-white h-12 w-12 shadow-xl text-base rounded-full flex items-center justify-center footer-icons hover:bg-ultramarine">
+                  <FontAwesomeIcon icon={item.icon} style={{ width: "20px", height: "20px" }} />
+                </a>
+              ))}
+            </div>
           </div>
-          <div className="flex-1 md:flex md:justify-center">
-            <Contact />
-          </div>
-          <div className="flex-1 flex justify-end">
-            <EcommerceSocial />
+
+          {/* Column 2/3/4 */}
+          {products.map((product) => (
+            <div key={product.id} className="sm:col-span-2 flex flex-col items-center lg:items-start">
+              <p className="text-black text-lg font-medium mb-9">{product.section}</p>
+              <ul>
+                {product.links.map((link, index) => (
+                  <li key={index} className="mb-5">
+                    {link === 'About Products' || link === 'How we work?' ? (
+                      <button onClick={() => handleDialogOpen(link)} className="text-darkgray text-base font-normal mb-6 space-links">
+                        {link}
+                      </button>
+                    ) : (
+                      <a href="/" className="text-darkgray text-base font-normal mb-6 space-links">
+                        {link}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+
+        {/* About Dialog */}
+        <Dialog open={aboutOpen} onClose={handleClose}>
+          <DialogTitle>{currentDialog}</DialogTitle>
+          <DialogContent>
+            {currentDialog === 'About Products' && <p>Information about our products.</p>}
+            {currentDialog === 'How we work?' && <p>Details on how we operate and our processes.</p>}
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Close
+            </Button>
+          </DialogActions>
+        </Dialog>
+
+        {/* All Rights Reserved */}
+        <div className="py-10 flex flex-col md:flex-row items-center justify-between border-t border-t-gray-blue">
+          <h4 className="text-dark-red opacity-75 text-sm text-center md:text-start font-normal">
+            @2024.GaHipHop.All rights reserved
+          </h4>
+          <div className="flex gap-5 mt-5 md:mt-0 justify-center md:justify-start">
+            <h4 className="text-dark-red opacity-75 text-sm font-normal">
+              <a href="/" target="_blank">Privacy policy</a>
+            </h4>
+            <div className="h-5 bg-dark-red opacity-25 w-0.5"></div>
+            <h4 className="text-dark-red opacity-75 text-sm font-normal">
+              <a href="/" target="_blank">Terms & conditions</a>
+            </h4>
           </div>
         </div>
       </div>
-    </footer>
+    </div>
   );
 }
 

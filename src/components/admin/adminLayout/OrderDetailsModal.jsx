@@ -36,7 +36,7 @@ const OrderDetailsModal = ({ orders, visible, onClose }) => {
             <Typography variant="body2">{`Name: ${order.userInfo?.userName}`}</Typography>
             <Typography variant="body2">{`Email: ${order.userInfo?.email}`}</Typography>
             <Typography variant="body2">{`Phone: ${order.userInfo?.phone}`}</Typography>
-            <Typography variant="body2">{`Address: ${order.userInfo?.address}, ${order.userInfo?.wards}, ${order.userInfo?.province}`}</Typography>
+            <Typography variant="body2">{`Address: ${order.userInfo?.address}`}</Typography>
             <Typography variant="body1" sx={{ mt: 2 }}><strong>Order Details:</strong></Typography>
             <TableContainer component={Paper}>
               <Table>

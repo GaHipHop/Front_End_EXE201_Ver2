@@ -182,12 +182,9 @@ function AdminDiscount() {
   function DiscountTable({ discounts }) {
     return (
       <section className="flex flex-col items-start text-base font-medium tracking-tight text-center text-black max-md:flex-wrap max-md:pr-5">
-        <div className="flex justify-between w-full px-2.5 py-2.5 bg-white">
+        <div className="flex justify-between w-full px-4 py-3 bg-white border-b border-gray-300">
           <div className="flex-1 flex justify-center items-center">
             <span>No</span>
-          </div>
-          <div className="flex-1 flex justify-center items-center">
-            <span>Discount ID</span>
           </div>
           <div className="flex-1 flex justify-center items-center">
             <span>Percent</span>
@@ -201,56 +198,54 @@ function AdminDiscount() {
         </div>
         {discounts.length > 0 ? (
           discounts.map((discount, index) => (
-          <div
-            key={index}
-            className="relative flex justify-between w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap"
-          >
-            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              {index + 1}
-            </div>
-            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              {discount.id}
-            </div>
-            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              <span>{discount.percent}%</span>
-            </div>
-            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
-              <span>{new Date(discount.expiredDate).toLocaleDateString()}</span>
-            </div>
-            <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words relative">
-              <span onClick={() => setDropdownVisible(index)}>...</span>
-              {dropdownVisible === index && (
-                <div
-                  className="absolute top-full mt-2 shadow-lg border rounded"
-                  style={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid #e0e0e0',
-                    zIndex: 10
-                  }}
-                >
-                  <ul>
-                    {currentFilter === 'true' && (
-                      <li className="p-2 cursor-pointer flex items-center" onClick={() => handleUpdate(discount.id)}>
-                        <UpdateIcon className="mr-2" /> Update
+            <div
+              key={index}
+              className="relative flex justify-between w-full px-4 py-3 text-base tracking-tight text-black bg-white max-md:flex-wrap border-b border-gray-300"
+            >
+              <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
+                {index + 1}
+              </div>
+              <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
+                <span>{discount.percent}%</span>
+              </div>
+              <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words">
+                <span>{new Date(discount.expiredDate).toLocaleDateString()}</span>
+              </div>
+              <div className="flex-1 flex justify-center items-center text-center font-plus-jakarta break-words relative">
+                <span onClick={() => setDropdownVisible(index)}>...</span>
+                {dropdownVisible === index && (
+                  <div
+                    className="absolute top-full mt-2 shadow-lg border rounded"
+                    style={{
+                      backgroundColor: '#ffffff',
+                      border: '1px solid #e0e0e0',
+                      zIndex: 10
+                    }}
+                  >
+                    <ul>
+                      {currentFilter === 'true' && (
+                        <li className="p-2 cursor-pointer flex items-center" onClick={() => handleUpdate(discount.id)}>
+                          <UpdateIcon className="mr-2" /> Update
+                        </li>
+                      )}
+                      <li className="p-2 cursor-pointer flex items-center" onClick={() => handleDelete(discount.id)}>
+                        <DeleteIcon className="mr-2" /> {currentFilter === 'true' ? 'Delete' : 'Available'}
                       </li>
-                    )}
-                    <li className="p-2 cursor-pointer flex items-center" onClick={() => handleDelete(discount.id)}>
-                      <DeleteIcon className="mr-2" /> {currentFilter === 'true' ? 'Delete' : 'Available'}
-                    </li>
-                  </ul>
-                </div>
-              )}
+                    </ul>
+                  </div>
+                )}
+              </div>
             </div>
+          ))
+        ) : (
+          <div className="flex justify-center w-full px-4 py-3 text-base tracking-tight text-black bg-white max-md:flex-wrap border-b border-gray-300">
+            No discount available
           </div>
-        ))
-      ) : (
-        <div className="flex justify-center w-full px-2.5 py-2.5 text-base tracking-tight text-black bg-white max-md:flex-wrap">
-          No discount available
-        </div>
-      )}
+        )}
       </section>
     );
   }
+  
 
   return (
     <div className="h-screen bg-white flex">
@@ -270,7 +265,7 @@ function AdminDiscount() {
             }
 
             .custom-button.selected {
-              background-color: #f4bbff;
+              background-color: #EEA4F1;
             }
 
             .custom-button:hover {

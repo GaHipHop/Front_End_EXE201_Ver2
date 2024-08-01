@@ -1,9 +1,5 @@
 import {
-  Button,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
-  DropdownTrigger,
+  Button
 } from "@nextui-org/react";
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
@@ -23,7 +19,6 @@ import { getOrderByMonthYear } from '../../../lib/service/orderService';
 import AdminHeader from "../adminLayout/AdminHeader";
 import OrderDetailsModal from "../adminLayout/OrderDetailsModal";
 import Sidebar from "../adminLayout/Sidebar";
-
 
 const generatePDF = async (orders, chartData, chartRef) => {
   const doc = new jsPDF();
@@ -142,26 +137,23 @@ const generatePDF = async (orders, chartData, chartRef) => {
   doc.save('dashboard_report.pdf');
 };
 
-
-
 const handleExportPDF = (orders, chartData, chartRef) => {
   generatePDF(orders, chartData, chartRef);
 };
 
 const StatisticCard = ({ title, value, change }) => (
-  <div className="flex flex-col justify-center items-center w-full px-4 py-6 mt-4 mb-4 text-xl font-semibold tracking-tight text-center bg-pink-300 rounded-xl shadow-lg">
-  <div className="flex justify-between w-full">
-    <div className="text-white">{title}</div>
-    <div className={`flex items-center px-2 py-1 rounded-full ${change > 0 ? 'bg-green-200 text-green-700' : 'bg-red-200 text-red-700'}`}>
-    {change > 0 ? '⇑' : '⇓'} {Math.abs(change).toFixed(2)}%
-    </div>
-  </div>
-  <div className="mt-4 flex items-center justify-between w-full">
-  <div className="mt-3 text-4xl text-white">{value}</div>
-  </div>
-
+  <div className="flex flex-col justify-center items-center w-full px-4 py-6 mt-4 mb-4 text-xl font-semibold tracking-tight text-center bg-[#EDAFDB] rounded-xl shadow-lg">
+    <div className="flex justify-between w-full">
+      <div className="text-white">{title}</div>
+      <div className={`flex items-center px-2 py-1 rounded-full border ${change > 0 ? 'border-green-500 text-green-500' : 'border-red-500 text-red-500'}`}>
+  {change > 0 ? '⇑' : '⇓'} {Math.abs(change).toFixed(2)}%
 </div>
 
+    </div>
+    <div className="mt-4 flex items-center justify-between w-full">
+      <div className="mt-3 text-4xl text-white">{value}</div>
+    </div>
+  </div>
 );
 
 function Dashboard() {
@@ -188,11 +180,11 @@ function Dashboard() {
         console.error('No token found');
         return;
       }
-    
+
       try {
         const data = await getOrderByMonthYear(selectedMonth.month, selectedMonth.year, token);
         console.log('API Response:', data); // Log API response
-    
+
         if (data.orders && data.orders.length > 0) {
           setTotalOrders(data.count || 0);
           setTotalRevenue(data.totalAmount || 0);
@@ -201,23 +193,23 @@ function Dashboard() {
           setTotalQuantitySold(data.quantitySold || 0);
           setMostSoldProductQuantity(data.mostSoldProductQuantity || 0);
           setMostSoldProduct(data.mostSoldProduct || "");
-    
+
           // Process chart data
           const dailyData = data.orders.reduce((acc, order) => {
             const date = new Date(order.createDate).getDate();
             const fullDate = new Date(order.createDate).toLocaleDateString();
             const revenue = order.totalPrice;
             const existingData = acc.find(item => item.date === date);
-    
+
             if (existingData) {
               existingData.revenue += revenue;
             } else {
               acc.push({ date, fullDate, revenue });
             }
-    
+
             return acc;
           }, []);
-    
+
           setChartData(dailyData);
           setOrders(data.orders); // Store the orders in the state
         } else {
@@ -242,23 +234,13 @@ function Dashboard() {
         setOrders([]); // Clear orders in case of an error
       }
     };
-    
 
     fetchData();
   }, [selectedMonth]);
 
-  const getLast12Months = () => {
-    const months = [];
-    const currentDate = new Date();
-    for (let i = 0; i < 12; i++) {
-      const date = new Date(currentDate.getFullYear(), currentDate.getMonth() - i, 1);
-      months.push({ month: date.getMonth() + 1, year: date.getFullYear() });
-    }
-    return months;
-  };
-
-  const handleMonthSelect = (month, year) => {
-    setSelectedMonth({ month, year });
+  const handleMonthChange = (e) => {
+    const [year, month] = e.target.value.split('-');
+    setSelectedMonth({ month: parseInt(month), year: parseInt(year) });
   };
 
   const handleDetailClick = () => {
@@ -337,7 +319,7 @@ function Dashboard() {
                             <YAxis label={{ value: 'Millions', angle: 0, position: 'outsideLeft', textAnchor: 'end', dy: -140  }} />
                             <Tooltip content={<CustomTooltip />} />
                             <Legend />
-                            <Line type="monotone" dataKey="revenue" stroke="#FF69B4" activeDot={{ r: 8 }} />
+                            <Line type="monotone" dataKey="revenue" stroke="#EDAFDB" activeDot={{ r: 8 }} />
                           </LineChart>
                         </ResponsiveContainer>
                       </div>
@@ -346,28 +328,18 @@ function Dashboard() {
                 </section>
                 <section className="flex flex-col ml-5 w-[30%] max-md:ml-0 max-md:w-full">
                   <div className="flex flex-col font-semibold tracking-tight text-black max-md:mt-10">
-                    <Dropdown>
-                      <DropdownTrigger>
-                        <Button
-                          className="self-end px-4 py-3.5 text-medium rounded-xl shadow-lg"
-                          style={{
-                            width: 150,
-                            backgroundColor: "white", // Change this color to make the button more visible
-                            color: "black", // Text color
-                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
-                          }}
-                        >
-                          {`${selectedMonth.month}/${selectedMonth.year}`}
-                        </Button>
-                      </DropdownTrigger>
-                      <DropdownMenu>
-                        {getLast12Months().map(({ month, year }) => (
-                          <DropdownItem key={`${month}-${year}`} onClick={() => handleMonthSelect(month, year)}>
-                            {`${month}/${year}`}
-                          </DropdownItem>
-                        ))}
-                      </DropdownMenu>
-                    </Dropdown>
+                    <input
+                      type="month"
+                      value={`${selectedMonth.year}-${selectedMonth.month.toString().padStart(2, '0')}`}
+                      onChange={handleMonthChange}
+                      className="self-end px-4 py-3.5 text-medium rounded-xl shadow-lg"
+                      style={{
+                        width: 200,
+                        backgroundColor: "white", // Change this color to make the button more visible
+                        color: "black", // Text color
+                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+                      }}
+                    />
                     <div className="flex flex-col items-start px-5 pt-10 pb-5 mt-5 bg-white rounded-xl shadow-lg"
                     style={{boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'}}
                     >
@@ -391,7 +363,7 @@ function Dashboard() {
                         <Button
                           auto
                           flat
-                          className="bold-text px-4 py-2.5 text-center whitespace-nowrap rounded-xl text-white bg-pink-300 border-2 border-solid border-white"
+                          className="bold-text px-4 py-2.5 text-center whitespace-nowrap rounded-xl text-white bg-[#EDAFDB] border-2 border-solid border-white"
                           onClick={handleDetailClick}
                         >
                           Details
@@ -399,7 +371,7 @@ function Dashboard() {
                         <Button
                           auto
                           flat
-                          className="bold-text px-4 py-2.5 text-center whitespace-nowrap rounded-xl text-white bg-pink-300 border-2 border-solid border-white"
+                          className="bold-text px-4 py-2.5 text-center whitespace-nowrap rounded-xl text-white bg-[#EDAFDB] border-2 border-solid border-white"
                           onClick={() => handleExportPDF(orders, chartData, chartRef)}
                         >
                           Export

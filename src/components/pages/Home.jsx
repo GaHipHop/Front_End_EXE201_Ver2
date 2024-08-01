@@ -1,8 +1,31 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import imgURL from 'src/assets/image/8c93821ba980000b83c02a7320d9bd20e9094bbc6ea1a02acc4ff34996276d85.png';
 import { getAllCategory } from '../../lib/service/categoryService';
 import { getAllProductByCategoryId } from '../../lib/service/productService';
-import imgURL from 'src/assets/image/8c93821ba980000b83c02a7320d9bd20e9094bbc6ea1a02acc4ff34996276d85.png';
+
+const ProductCard = ({ imgSrc, title, productId }) => {
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate(`/productDetail/${productId}`);
+  };
+
+  return (
+    <div
+      className="relative flex flex-col w-[65%] max-w-[300px] font-medium tracking-tight text-center text-black bg-white border border-gray-200 shadow-lg rounded-lg mx-2 cursor-pointer transition-transform transform hover:scale-105"
+      onClick={handleClick}
+      style={{height:312}}
+    >
+      <div className="flex justify-center">
+        <img loading="lazy" src={imgSrc} alt={title} className="h-48 w-auto object-contain rounded-t-lg" />
+      </div>
+      <div className="flex flex-col px-4 py-4">
+        <span className="text-lg font-semibold">{title}</span>
+      </div>
+    </div>
+  );
+};
 
 function Home() {
   const [categories, setCategories] = useState([]);
@@ -15,9 +38,9 @@ function Home() {
     const fetchCategories = async () => {
       try {
         const response = await getAllCategory();
-        setCategories(response.data.data); // Giả định `response.data` chứa danh sách danh mục
+        setCategories(response.data.data); // Assuming `response.data` contains the category list
         
-        // Gọi API để lấy sản phẩm cho mỗi danh mục
+        // Fetch products for each category
         const productFetchPromises = response.data.data.map(async (category) => {
           try {
             const productsResponse = await getAllProductByCategoryId(category.id);
@@ -74,20 +97,23 @@ function Home() {
         </p>
         {categories.map((category) => (
           <div className="mb-10 relative" key={category.id}>
-            <h3 className="text-xl font-semibold mb-4">{category.categoryName}</h3>
+            <h3 className="text-xl font-semibold mb-4 mx-auto" style={{ maxWidth: '80%', textAlign: 'left' }}>
+              {category.categoryName}
+            </h3>
             <button 
-              className="absolute top-0 right-0 bg-transparent text-black flex items-center"
+              className="absolute top-0 right-4 bg-transparent text-black flex items-center" // Adjusted right positioning
               onClick={() => handleSeeAll(category.id)}
             >
               <span className="font-bold">See all</span>
               <span className="ml-1">→</span>
             </button>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="flex justify-center flex-wrap">
               {productsByCategory[category.id]?.slice(0, 3).map((product) => (
-                <img 
+                <ProductCard
                   key={product.id}
-                  src={product.image} 
-                  alt={product.productName} 
+                  imgSrc={product.image}
+                  title={product.productName}
+                  productId={product.id}
                 />
               ))}
             </div>
