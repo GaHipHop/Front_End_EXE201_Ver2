@@ -136,9 +136,8 @@ function Home() {
           Our Collection
         </h2>
         <p className="text-center mb-10 font-light italic">
-          Hãy để những đóa hoa nhung kèm và đất sét lưu niệm của chúng tôi thay
-          lời muốn nói, mang đến niềm vui và kỷ niệm đẹp cho những người thân
-          yêu của bạn.
+          Let our velvet flowers and clay souvenirs do the talking words to say,
+          bringing joy and beautiful memories to loved ones your love.
         </p>
         {categories.map((category) => (
           <div className="mb-10 relative" key={category.id}>
@@ -153,7 +152,9 @@ function Home() {
               onClick={() => handleSeeAll(category.id)}
             >
               <span className="font-bold">See all</span>
-              <span className="ml-1" style={{marginRight: 240}}>→</span>
+              <span className="ml-1" style={{ marginRight: 240 }}>
+                →
+              </span>
             </button>
             <div className="flex justify-center flex-wrap">
               {productsByCategory[category.id]?.slice(0, 3).map((product) => (
