@@ -129,7 +129,7 @@ function Home() {
   }
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="flex flex-col bg-white bg-gray-50">
       <img loading="lazy" src={imgURL} className="w-full" alt="Hero Banner" />
       <div className="p-6">
         <h2 className="text-center text-3xl font-bold my-6 font-mr-bedfort">
@@ -156,7 +156,7 @@ function Home() {
                 →
               </span>
             </button>
-            <div className="flex justify-center flex-wrap">
+            <div className="flex justify-center flex-wrap gap-8">
               {productsByCategory[category.id]?.slice(0, 3).map((product) => (
                 <ProductCard
                   key={product.id}

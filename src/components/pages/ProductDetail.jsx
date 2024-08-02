@@ -24,6 +24,11 @@ function KindList({ kinds, onKindClick }) {
   );
 }
 
+const formatPrice = (price) => {
+  return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
+};
+
+
 const QuantitySelector = ({ initialQuantity = 1, onQuantityChange }) => {
   const [quantity, setQuantity] = useState(initialQuantity);
 
@@ -95,7 +100,7 @@ function MainContent({ productId, onAddToCart, setKindId }) {
   };
 
   return (
-    <main className="px-10 py-4 w-full bg-white border-t border-gray-300 max-md:px-5 max-md:max-w-full">
+    <main className="px-10 py-4 w-full bg-gray-50 border-t border-gray-300 max-md:px-5 max-md:max-w-full">
       {kind && (
         <div className="flex gap-6 max-md:flex-col max-md:gap-4">
           <div className="flex flex-col w-[75%] max-md:w-full mx-auto">
@@ -131,10 +136,10 @@ function MainContent({ productId, onAddToCart, setKindId }) {
                 <p className="mt-5">
                   Price: {product.currentPrice !== product.productPrice ? (
                     <>
-                      <span className="line-through text-gray-500">{product.productPrice}đ</span> <span className="font-bold text-red-500">{product.currentPrice}đ</span>
+                      <span className="line-through text-gray-500">{formatPrice(product.productPrice)}</span> <span className="font-bold text-red-500">{formatPrice(product.currentPrice)}</span>
                     </>
                   ) : (
-                    <span className="font-bold text-gray-900">{product.productPrice}đ</span>
+                    <span className="font-bold text-gray-900">{formatPrice(product.productPrice)}đ</span>
                   )}
                 </p>
                 {product.discount.percent > 0 && (
@@ -189,7 +194,7 @@ function ProductDetail() {
   };
 
   return (
-    <div className="flex flex-col bg-white min-h-screen">
+    <div className="flex flex-col bg-white">
       <div className="flex flex-col items-center w-full mt-[5rem] px-4">
         <MainContent productId={productId} onAddToCart={handleAddToCart} setKindId={setKindId} />
         <Button

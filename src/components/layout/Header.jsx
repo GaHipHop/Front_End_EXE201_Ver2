@@ -14,6 +14,7 @@ const Header = ({ onCategorySelect }) => {
   const [cartItemCount, setCartItemCount] = useState(0);
   const inputRef = useRef(null);
   const navigate = useNavigate();
+  const [searchKeyword, setSearchKeyword] = useState("");
 
   const handleSearchClick = () => {
     setSearchOpen(true);
@@ -21,6 +22,15 @@ const Header = ({ onCategorySelect }) => {
 
   const handleBlur = () => {
     setSearchOpen(false);
+  };
+  const handleSearchChange = (event) => {
+    setSearchKeyword(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    if (searchKeyword.trim() !== "") {
+      navigate(`/product?search=${searchKeyword}`);
+    }
   };
 
   useEffect(() => {
@@ -145,13 +155,20 @@ const Header = ({ onCategorySelect }) => {
       <div className="flex items-center space-x-4 relative">
         {searchOpen ? (
           <Input
-            ref={inputRef}
-            className="h-10 w-[15rem]"
-            placeholder="Tìm kiếm..."
-            size="sm"
-            type="search"
-            onBlur={handleBlur}
-          />
+          ref={inputRef}
+          className="h-10 w-[15rem]"
+          placeholder="Tìm kiếm..."
+          size="sm"
+          type="search"
+          value={searchKeyword}
+          onChange={handleSearchChange}
+          onBlur={handleBlur}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              handleSearchSubmit();
+            }
+          }}
+        />
         ) : (
           <FontAwesomeIcon
             icon={faMagnifyingGlass}
@@ -210,7 +227,7 @@ const Header = ({ onCategorySelect }) => {
                       <Typography>+</Typography>
                     </IconButton>
                   </Box>
-                  <Typography variant="body2">Giá: {formatCurrency(item.productPrice)}</Typography>
+                  <Typography variant="body2">Price: {formatCurrency(item.productPrice)}</Typography>
                 </Box>
                 <IconButton onClick={() => removeCartItem(item.id)}>
                   <Typography>X</Typography>
@@ -218,9 +235,9 @@ const Header = ({ onCategorySelect }) => {
               </Box>
             ))
           ) : (
-            <Typography>Không có sản phẩm nào trong giỏ hàng.</Typography>
+            <Typography>No products.</Typography>
           )}
-          <Typography variant="h6">Tổng: {formatCurrency(totalPrice)}</Typography>
+          <Typography variant="h6">Total: {formatCurrency(totalPrice)}</Typography>
         </Box>
       </Modal>
     </header>
