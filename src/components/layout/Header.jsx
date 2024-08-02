@@ -1,19 +1,30 @@
-import { faCartShopping, faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faMagnifyingGlass, faBars } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Box, IconButton, Modal, Typography } from '@mui/material';
-import { Button, Input } from '@nextui-org/react';
+import {
+  AppBar,
+  Box,
+  Drawer,
+  IconButton,
+  InputBase,
+  Modal,
+  Toolbar,
+  Typography,
+  useMediaQuery,
+} from '@mui/material';
+import { Button } from '@nextui-org/react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Header = ({ onCategorySelect }) => {
   const [searchOpen, setSearchOpen] = useState(false);
-  const [isSticky, setIsSticky] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [cartItems, setCartItems] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
   const [cartItemCount, setCartItemCount] = useState(0);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const inputRef = useRef(null);
   const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width:600px)');
 
   const handleSearchClick = () => {
     setSearchOpen(true);
@@ -28,18 +39,6 @@ const Header = ({ onCategorySelect }) => {
       inputRef.current.focus();
     }
   }, [searchOpen]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsSticky(window.scrollY > 50);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   const fetchCartItems = () => {
     try {
@@ -56,7 +55,7 @@ const Header = ({ onCategorySelect }) => {
   const removeCartItem = (itemId) => {
     try {
       const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-      const updatedCartItems = cartItems.filter(item => item.id !== itemId);
+      const updatedCartItems = cartItems.filter((item) => item.id !== itemId);
       localStorage.setItem('cartItems', JSON.stringify(updatedCartItems));
       setCartItems(updatedCartItems);
       const updatedTotalPrice = updatedCartItems.reduce((sum, item) => sum + item.productPrice * item.quantity, 0);
@@ -70,7 +69,7 @@ const Header = ({ onCategorySelect }) => {
   const updateCartItemQuantity = (itemId, newQuantity) => {
     try {
       const cartItems = JSON.parse(localStorage.getItem('cartItems')) || [];
-      const updatedCartItems = cartItems.map(item => {
+      const updatedCartItems = cartItems.map((item) => {
         if (item.id === itemId) {
           return { ...item, quantity: newQuantity };
         }
@@ -115,66 +114,79 @@ const Header = ({ onCategorySelect }) => {
   };
 
   return (
-    <header
-      className={`flex justify-between items-center px-14 py-5 w-full text-black bg-white border-b max-md:px-5 transition-all duration-300 ease-in-out ${
-        isSticky ? 'fixed top-0 left-0 shadow-lg z-50' : 'fixed z-40'
-      }`}
-    >
-      <div className="flex items-center space-x-4 font-poiret-one">
-        <a href="/" className="flex items-center space-x-4 font-poiret-one">
-          <img
-            loading="lazy"
-            src="https://cdn.builder.io/api/v1/image/assets/TEMP/0e4339a56fab22957162049c2f58e5884d8d2ea943f28743013a119ef8078b13?apiKey=402c56a5a1d94d11bd24e7050966bb9d&"
-            className="w-[60px]"
-            alt="Logo"
-          />
-        </a>
-        <Button variant="none" onClick={() => navigate('/product')}>
-          <span className="text-[20px] hover:underline decoration-1 font-bold">All Products</span>
-        </Button>
-        <a
-          href="/about"
-          className="block text-[20px] hover:underline hover:decoration-black decoration-1 font-bold"
-        >
-          About Us
-        </a>
-      </div>
-      <div className="absolute left-1/2 transform -translate-x-1/2 text-[40px] font-medium font-poiret-one font-sans">
-        <span>GaHipHop</span>
-      </div>
-      <div className="flex items-center space-x-4 relative">
-        {searchOpen ? (
-          <Input
-            ref={inputRef}
-            className="h-10 w-[15rem]"
-            placeholder="Tìm kiếm..."
-            size="sm"
-            type="search"
-            onBlur={handleBlur}
-          />
-        ) : (
-          <FontAwesomeIcon
-            icon={faMagnifyingGlass}
-            size="lg"
-            onClick={handleSearchClick}
-            className="cursor-pointer"
-          />
+    <AppBar position="sticky" color="default">
+      <Toolbar className="flex justify-between items-center">
+        {isMobile && (
+          <IconButton edge="start" color="inherit" onClick={() => setDrawerOpen(true)}>
+            <FontAwesomeIcon icon={faBars} />
+          </IconButton>
         )}
-        <div className="relative">
-          <FontAwesomeIcon
-            icon={faCartShopping}
-            size="lg"
-            className="cursor-pointer"
-            onClick={() => setIsCartOpen(true)}
-          />
-          {cartItemCount > 0 && (
-            <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
-              {cartItemCount}
-            </span>
+        <div className="flex items-center space-x-4 font-poiret-one">
+          <a href="/" className="flex items-center space-x-4 font-poiret-one">
+            <img
+              loading="lazy"
+              src="https://cdn.builder.io/api/v1/image/assets/TEMP/0e4339a56fab22957162049c2f58e5884d8d2ea943f28743013a119ef8078b13?apiKey=402c56a5a1d94d11bd24e7050966bb9d&"
+              className="w-[60px]"
+              alt="Logo"
+            />
+          </a>
+          {!isMobile && (
+            <>
+              <Button variant="none" onClick={() => navigate('/product')}>
+                <span className="text-[20px] hover:underline decoration-1 font-bold">All Products</span>
+              </Button>
+              <a
+                href="/about"
+                className="block text-[20px] hover:underline hover:decoration-black decoration-1 font-bold"
+              >
+                About Us
+              </a>
+            </>
           )}
         </div>
-      </div>
-
+        <div className="absolute left-1/2 transform -translate-x-1/2 text-[40px] font-medium font-poiret-one font-sans">
+          {!isMobile && <span>GaHipHop</span>}
+        </div>
+        <div className="flex items-center space-x-4 relative">
+          {searchOpen ? (
+            <InputBase
+              inputRef={inputRef}
+              className="h-10 w-[15rem]"
+              placeholder="Tìm kiếm..."
+              size="sm"
+              type="search"
+              onBlur={handleBlur}
+            />
+          ) : (
+            <FontAwesomeIcon
+              icon={faMagnifyingGlass}
+              size="lg"
+              onClick={handleSearchClick}
+              className="cursor-pointer"
+            />
+          )}
+          <div className="relative">
+            <FontAwesomeIcon
+              icon={faCartShopping}
+              size="lg"
+              className="cursor-pointer"
+              onClick={() => setIsCartOpen(true)}
+            />
+            {cartItemCount > 0 && (
+              <span className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full text-xs w-5 h-5 flex items-center justify-center">
+                {cartItemCount}
+              </span>
+            )}
+          </div>
+        </div>
+      </Toolbar>
+      <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+        <Box sx={{ width: 250, padding: 2 }}>
+          <Typography variant="h6">Menu</Typography>
+          <Button onClick={() => navigate('/product')}>All Products</Button>
+          <Button onClick={() => navigate('/about')}>About Us</Button>
+        </Box>
+      </Drawer>
       <Modal open={isCartOpen} onClose={() => setIsCartOpen(false)}>
         <Box
           sx={{
@@ -223,7 +235,7 @@ const Header = ({ onCategorySelect }) => {
           <Typography variant="h6">Tổng: {formatCurrency(totalPrice)}</Typography>
         </Box>
       </Modal>
-    </header>
+    </AppBar>
   );
 };
 

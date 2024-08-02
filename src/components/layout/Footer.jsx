@@ -75,19 +75,28 @@ function Footer() {
 
   return (
     <div className="flex justify-center">
-      <div className="max-w-7xl w-full">
+      <div className="max-w-7xl w-full px-4">
         <div className="my-12 grid grid-cols-1 gap-y-10 sm:grid-cols-6 lg:grid-cols-12">
           {/* Column 1 */}
-          <div className="sm:col-span-6 lg:col-span-5 flex flex-col items-center lg:items-start"style={{marginLeft: 100}}>
-            <div className="flex flex-shrink-0 items-center">
-              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/0e4339a56fab22957162049c2f58e5884d8d2ea943f28743013a119ef8078b13?apiKey=402c56a5a1d94d11bd24e7050966bb9d&" alt="logo" width={66} height={66} />
+          <div className="sm:col-span-6 lg:col-span-5 flex flex-col items-center lg:items-start text-center lg:text-left">
+            <div className="flex flex-shrink-0 items-center justify-center lg:justify-start w-full">
+              <img
+                src="https://cdn.builder.io/api/v1/image/assets/TEMP/0e4339a56fab22957162049c2f58e5884d8d2ea943f28743013a119ef8078b13?apiKey=402c56a5a1d94d11bd24e7050966bb9d&"
+                alt="logo"
+                width={66}
+                height={66}
+              />
             </div>
-            <h3 className="text-xs font-medium text-gunmetalgray lh-160 mt-5 mb-4 lg:mb-16 text-center lg:text-left">
+            <h3 className="text-xs font-medium text-gunmetalgray lh-160 mt-5 mb-4 lg:mb-16">
               Your ultimate destination for unique, creative, and stylish gifts and decorations.
             </h3>
             <div className="flex gap-4 justify-center lg:justify-start">
               {socialLinks.map((item, index) => (
-                <a href={item.link} key={index} className="bg-white h-12 w-12 shadow-xl text-base rounded-full flex items-center justify-center footer-icons hover:bg-ultramarine">
+                <a
+                  href={item.link}
+                  key={index}
+                  className="bg-white h-12 w-12 shadow-xl text-base rounded-full flex items-center justify-center footer-icons hover:bg-ultramarine"
+                >
                   <FontAwesomeIcon icon={item.icon} style={{ width: "20px", height: "20px" }} />
                 </a>
               ))}
@@ -96,13 +105,19 @@ function Footer() {
 
           {/* Column 2/3/4 */}
           {products.map((product) => (
-            <div key={product.id} className="sm:col-span-1 lg:col-span-3  flex flex-col items-center lg:items-start" style={{marginLeft: 120}}>
+            <div
+              key={product.id}
+              className="sm:col-span-3 lg:col-span-3 flex flex-col items-center lg:items-start text-center lg:text-left"
+            >
               <p className="text-black text-lg font-medium mb-9">{product.section}</p>
               <ul>
                 {product.links.map((link, index) => (
                   <li key={index} className="mb-5">
                     {link === 'About Products' || link === 'How we work?' ? (
-                      <button onClick={() => handleDialogOpen(link)} className="text-darkgray text-base font-normal mb-6 space-links">
+                      <button
+                        onClick={() => handleDialogOpen(link)}
+                        className="text-darkgray text-base font-normal mb-6 space-links"
+                      >
                         {link}
                       </button>
                     ) : (

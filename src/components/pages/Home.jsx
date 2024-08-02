@@ -141,21 +141,18 @@ function Home() {
         </p>
         {categories.map((category) => (
           <div className="mb-10 relative" key={category.id}>
-            <h3
-              className="text-xl font-semibold mb-4 mx-auto"
-              style={{ maxWidth: "80%", textAlign: "left" }}
-            >
-              {category.categoryName}
-            </h3>
-            <button
-              className="absolute top-0 right-4 bg-transparent text-black flex items-center"
-              onClick={() => handleSeeAll(category.id)}
-            >
-              <span className="font-bold">See all</span>
-              <span className="ml-1" style={{ marginRight: 240 }}>
-                →
-              </span>
-            </button>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold">
+                {category.categoryName}
+              </h3>
+              <button
+                className="text-black font-bold flex items-center"
+                onClick={() => handleSeeAll(category.id)}
+              >
+                <span>See all</span>
+                <span className="ml-1">→</span>
+              </button>
+            </div>
             <div className="flex justify-center flex-wrap">
               {productsByCategory[category.id]?.slice(0, 3).map((product) => (
                 <ProductCard

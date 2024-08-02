@@ -159,7 +159,6 @@ const Product = () => {
 
   return (
     <div className="flex flex-col bg-white">
-      <Header />
       <MainContent
         products={sortedProducts}
         page={page}
