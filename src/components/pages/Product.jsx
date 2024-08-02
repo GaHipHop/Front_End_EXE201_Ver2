@@ -1,7 +1,7 @@
 import TuneIcon from '@mui/icons-material/Tune';
 import { IconButton, Menu, MenuItem, Pagination, Stack } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { getAllProduct, getAllProductByCategoryId } from '../../lib/service/productService';
 import Header from '../layout/Header';
 
@@ -70,7 +70,7 @@ const MainContent = ({ products, page, pageSize, onPageChange, onSortChange, sor
           </Menu>
         </div>
       </div>
-      <section className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-20">
+      <section className="flex justify-center flex-wrap gap-10">
         {paginatedProducts.length > 0 ? (
           paginatedProducts.map((product, index) => (
             <ProductCard
@@ -109,10 +109,13 @@ const Product = () => {
   const [sortAnchorEl, setSortAnchorEl] = useState(null);
   const [sortedProducts, setSortedProducts] = useState([]);
   const pageSize = 6;
+  const location = useLocation();
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
+        const searchParams = new URLSearchParams(location.search);
+        const search = searchParams.get('search') || '';
         let data;
         if (categoryId) {
           const response = await getAllProductByCategoryId(categoryId);
@@ -120,6 +123,11 @@ const Product = () => {
         } else {
           const response = await getAllProduct();
           data = response.data.data;
+        }
+        if (search) {
+          data = data.filter(product =>
+            product.productName.toLowerCase().includes(search.toLowerCase())
+          );
         }
         setProducts(data);
         setSortedProducts(data);
@@ -129,7 +137,7 @@ const Product = () => {
     };
 
     fetchProducts();
-  }, [categoryId]);
+  }, [categoryId, location.search]);
 
   const handleMenuOpen = (event) => {
     setSortAnchorEl(event.currentTarget);
@@ -158,7 +166,7 @@ const Product = () => {
   };
 
   return (
-    <div className="flex flex-col bg-white">
+    <div className="flex flex-col bg-gray-50">
       <Header />
       <MainContent
         products={sortedProducts}
