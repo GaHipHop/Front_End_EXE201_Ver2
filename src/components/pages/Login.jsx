@@ -20,6 +20,7 @@ import {
   resetPassword,
   verifyOtp,
 } from "../../lib/service/authService";
+import ImgLoginURL from "src/assets/image/loginBG.png";
 
 const clientId =
   "389880763269-br8hcrtulhe7kpg91mrkfejj2tfots04.apps.googleusercontent.com";
@@ -207,12 +208,15 @@ const Login = () => {
       <section className="flex justify-start items-center overflow-hidden relative px-16 py-20 min-h-screen max-md:px-5">
         <img
           loading="lazy"
-          src="/src/assets/image/loginBG.png"
+          src={ImgLoginURL}
           alt=""
           className="object-cover absolute inset-0 w-full h-full"
           style={{ zIndex: -1 }}
         />
-        <div className="relative z-10 flex flex-col md:flex-row w-full max-w-2xl bg-opacity-80 p-8 rounded-lg shadow-lg" style={{marginBottom: 55, marginLeft: 55}}>
+        <div
+          className="relative z-10 flex flex-col md:flex-row w-full max-w-2xl bg-opacity-80 p-8 rounded-lg shadow-lg"
+          style={{ marginBottom: 55, marginLeft: 55 }}
+        >
           <div className="h-1 w-full md:h-full md:w-1 bg-black my-4 md:my-0"></div>
           <div className="flex flex-col items-center justify-center w-full md:w-1/2 p-4">
             <h2
@@ -277,11 +281,14 @@ const Login = () => {
               className="bg-[#EEA4F1] text-white text-2xl py-2 px-8 shadow transition duration-300 ease-in-out transform hover:scale-105"
               onClick={handleLogin}
               disabled={loading}
-              style={{width:432, height: 55, marginLeft: 150}}
+              style={{ width: 432, height: 55, marginLeft: 150 }}
             >
               {loading ? "Logging in..." : "Login"}
             </Button>
-            <div className="relative flex items-center max-w-sm my-4" style={{width: 618, marginLeft: 140}}>
+            <div
+              className="relative flex items-center max-w-sm my-4"
+              style={{ width: 618, marginLeft: 140 }}
+            >
               <div className="flex-grow border-t border-gray-400"></div>
               <span className="flex-shrink mx-4 text-gray-400">Or</span>
               <div className="flex-grow border-t border-gray-400"></div>
@@ -298,11 +305,6 @@ const Login = () => {
                     className="w-full flex items-center justify-center py-2 px-4 border border-gray-300 rounded-full shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                     onClick={onClick}
                   >
-                    <img
-                      src="/src/assets/image/google-icon.png" // Ensure the correct path to the image
-                      alt="Google icon"
-                      className="mr-3 w-6 h-6"
-                    />
                     Login with Google
                   </button>
                 )}

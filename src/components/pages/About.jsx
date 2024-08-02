@@ -1,6 +1,8 @@
 import React from "react";
 import Footer from "../layout/Footer";
 import Header from "../layout/Header";
+import ImgAboutURL from "src/assets/image/about_BG.png"
+
 
 function About() {
   return (
@@ -9,7 +11,7 @@ function About() {
       <div className="relative">
         <img
           loading="lazy"
-          src="https://cdn.builder.io/api/v1/image/assets/TEMP/56bb666e945d744c8fac97c6d588ebf8196715779e88ea6045dde2754112bf8f?apiKey=402c56a5a1d94d11bd24e7050966bb9d&"
+          src={ImgAboutURL}
           alt="background image"
           className="about-background-image"
           style={{ pointerEvents: "none" }}
