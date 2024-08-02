@@ -11,6 +11,7 @@ import {
 } from "@mui/icons-material";
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import ImgLogoURL from "src/assets/image/logo.png"
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -35,7 +36,7 @@ const Sidebar = () => {
     >
       <div className="flex flex-col items-center">
         <img
-          src="/src/assets/image/logo.png"
+          src={ImgLogoURL}
           alt="Logo"
           className={`w-20 h-20 mb-5 ${isCollapsed ? "rounded-full" : ""}`}
         />

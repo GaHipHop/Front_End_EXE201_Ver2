@@ -1,15 +1,25 @@
-import TuneIcon from '@mui/icons-material/Tune';
-import { IconButton, Menu, MenuItem, Pagination, Stack } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { getAllProduct, getAllProductByCategoryId } from '../../lib/service/productService';
-import Header from '../layout/Header';
+import TuneIcon from "@mui/icons-material/Tune";
+import { IconButton, Menu, MenuItem, Pagination, Stack } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import {
+  getAllProduct,
+  getAllProductByCategoryId,
+} from "../../lib/service/productService";
 
 const formatPrice = (price) => {
-  return price.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+  return price.toLocaleString("vi-VN", { style: "currency", currency: "VND" });
 };
 
-const ProductCard = ({ imgSrc, title, color, price, currentPrice, percent, productId }) => {
+const ProductCard = ({
+  imgSrc,
+  title,
+  color,
+  price,
+  currentPrice,
+  percent,
+  productId,
+}) => {
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -27,19 +37,28 @@ const ProductCard = ({ imgSrc, title, color, price, currentPrice, percent, produ
         </div>
       )}
       <div className="flex justify-center">
-        <img loading="lazy" src={imgSrc} alt={title} className="w-full h-54 object-cover rounded-t-lg" />
+        <img
+          loading="lazy"
+          src={imgSrc}
+          alt={title}
+          className="w-full h-54 object-cover rounded-t-lg"
+        />
       </div>
       <div className="flex flex-col px-6 py-6">
         <span className="text-lg font-semibold">{title}</span>
         <span
-          className={`text-xl ${currentPrice !== price ? 'line-through text-gray-500' : 'font-bold'}`}
-          style={currentPrice !== price ? { fontSize: '1em' } : {}}
+          className={`text-xl ${
+            currentPrice !== price ? "line-through text-gray-500" : "font-bold"
+          }`}
+          style={currentPrice !== price ? { fontSize: "1em" } : {}}
         >
           {formatPrice(price)}
         </span>
         {currentPrice !== price && (
           <div className="flex justify-center items-center mt-2">
-            <span className="text-xl text-red-500 font-bold">{formatPrice(currentPrice)}</span>
+            <span className="text-xl text-red-500 font-bold">
+              {formatPrice(currentPrice)}
+            </span>
           </div>
         )}
       </div>
@@ -47,7 +66,16 @@ const ProductCard = ({ imgSrc, title, color, price, currentPrice, percent, produ
   );
 };
 
-const MainContent = ({ products, page, pageSize, onPageChange, onSortChange, sortAnchorEl, handleMenuOpen, handleMenuClose }) => {
+const MainContent = ({
+  products,
+  page,
+  pageSize,
+  onPageChange,
+  onSortChange,
+  sortAnchorEl,
+  handleMenuOpen,
+  handleMenuClose,
+}) => {
   const startIndex = (page - 1) * pageSize;
   const paginatedProducts = products.slice(startIndex, startIndex + pageSize);
 
@@ -64,9 +92,13 @@ const MainContent = ({ products, page, pageSize, onPageChange, onSortChange, sor
             open={Boolean(sortAnchorEl)}
             onClose={handleMenuClose}
           >
-            <MenuItem onClick={() => onSortChange('default')}>Default</MenuItem>
-            <MenuItem onClick={() => onSortChange('price-up')}>Price Up</MenuItem>
-            <MenuItem onClick={() => onSortChange('price-down')}>Price Down</MenuItem>
+            <MenuItem onClick={() => onSortChange("default")}>Default</MenuItem>
+            <MenuItem onClick={() => onSortChange("price-up")}>
+              Price Up
+            </MenuItem>
+            <MenuItem onClick={() => onSortChange("price-down")}>
+              Price Down
+            </MenuItem>
           </Menu>
         </div>
       </div>
@@ -79,7 +111,11 @@ const MainContent = ({ products, page, pageSize, onPageChange, onSortChange, sor
               title={product.productName}
               color={product.colorName}
               price={product.productPrice}
-              currentPrice={product.currentPrice !== 0 ? product.currentPrice : product.productPrice}
+              currentPrice={
+                product.currentPrice !== 0
+                  ? product.currentPrice
+                  : product.productPrice
+              }
               percent={product.percent ? product.percent : 0}
               productId={product.id}
             />
@@ -95,7 +131,8 @@ const MainContent = ({ products, page, pageSize, onPageChange, onSortChange, sor
           onChange={(event, value) => onPageChange(value)}
           siblingCount={1}
           boundaryCount={1}
-          showFirstButton showLastButton
+          showFirstButton
+          showLastButton
         />
       </Stack>
     </main>
@@ -115,7 +152,7 @@ const Product = () => {
     const fetchProducts = async () => {
       try {
         const searchParams = new URLSearchParams(location.search);
-        const search = searchParams.get('search') || '';
+        const search = searchParams.get("search") || "";
         let data;
         if (categoryId) {
           const response = await getAllProductByCategoryId(categoryId);
@@ -125,14 +162,14 @@ const Product = () => {
           data = response.data.data;
         }
         if (search) {
-          data = data.filter(product =>
+          data = data.filter((product) =>
             product.productName.toLowerCase().includes(search.toLowerCase())
           );
         }
         setProducts(data);
         setSortedProducts(data);
       } catch (error) {
-        console.error('Failed to fetch products:', error);
+        console.error("Failed to fetch products:", error);
       }
     };
 
@@ -149,9 +186,9 @@ const Product = () => {
 
   const handleSortChange = (sortType) => {
     let sorted = [...products];
-    if (sortType === 'price-up') {
+    if (sortType === "price-up") {
       sorted.sort((a, b) => a.currentPrice - b.currentPrice);
-    } else if (sortType === 'price-down') {
+    } else if (sortType === "price-down") {
       sorted.sort((a, b) => b.currentPrice - a.currentPrice);
     } else {
       sorted = [...products];
@@ -166,8 +203,7 @@ const Product = () => {
   };
 
   return (
-    <div className="flex flex-col bg-gray-50">
-      <Header />
+    <div className="flex flex-col bg-white">
       <MainContent
         products={sortedProducts}
         page={page}
