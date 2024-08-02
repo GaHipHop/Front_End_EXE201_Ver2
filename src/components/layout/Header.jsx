@@ -14,6 +14,7 @@ import {
 import { Button } from '@nextui-org/react';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import messengerIcon from 'src/assets/image/messenger.png';  // Adjust the path as necessary
 
 const Header = ({ onCategorySelect }) => {
   const [searchOpen, setSearchOpen] = useState(false);
@@ -33,6 +34,7 @@ const Header = ({ onCategorySelect }) => {
   const handleBlur = () => {
     setSearchOpen(false);
   };
+
   const handleSearchChange = (event) => {
     setSearchKeyword(event.target.value);
   };
@@ -104,19 +106,20 @@ const Header = ({ onCategorySelect }) => {
     }
   }, [isCartOpen]);
 
-  useEffect(() => {
-    const script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.id = 'hs-script-loader';
-    script.async = true;
-    script.defer = true;
-    script.src = '//js-na1.hs-scripts.com/46686268.js';
-    document.head.appendChild(script);
+  // Uncomment and use if necessary for WebSocket chat integration
+  // useEffect(() => {
+  //   const script = document.createElement('script');
+  //   script.type = 'text/javascript';
+  //   script.id = 'hs-script-loader';
+  //   script.async = true;
+  //   script.defer = true;
+  //   script.src = '//js-na1.hs-scripts.com/46686268.js';
+  //   document.head.appendChild(script);
 
-    return () => {
-      document.head.removeChild(script);
-    };
-  }, []);
+  //   return () => {
+  //     document.head.removeChild(script);
+  //   };
+  // }, []);
 
   const formatCurrency = (value) => {
     return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
@@ -165,6 +168,8 @@ const Header = ({ onCategorySelect }) => {
               size="sm"
               type="search"
               onBlur={handleBlur}
+              onChange={handleSearchChange}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
             />
           ) : (
             <FontAwesomeIcon
@@ -244,6 +249,31 @@ const Header = ({ onCategorySelect }) => {
           <Typography variant="h6">Total: {formatCurrency(totalPrice)}</Typography>
         </Box>
       </Modal>
+
+      {/* Messenger Icon */}
+      <div
+        style={{
+          position: 'fixed',
+          bottom: '20px',
+          right: '20px',
+          width: '50px',
+          height: '50px',
+          cursor: 'pointer',
+          zIndex: 1000,
+        }}
+        onClick={() => window.open('https://m.me/nguyen.rosie.946/', '_blank')}
+      >
+        <img
+          src={messengerIcon}
+          alt="Messenger Icon"
+          style={{
+            width: '100%',
+            height: '100%',
+            borderRadius: '50%',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+          }}
+        />
+      </div>
     </AppBar>
   );
 };
