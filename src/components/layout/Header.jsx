@@ -1,4 +1,4 @@
-import { faCartShopping, faMagnifyingGlass, faBars } from '@fortawesome/free-solid-svg-icons';
+import { faCartShopping, faMagnifyingGlass, faBars, faUser } from '@fortawesome/free-solid-svg-icons';  // Import the user icon
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   AppBar,
@@ -23,6 +23,7 @@ const Header = ({ onCategorySelect }) => {
   const [totalPrice, setTotalPrice] = useState(0);
   const [cartItemCount, setCartItemCount] = useState(0);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [searchKeyword, setSearchKeyword] = useState('');
   const inputRef = useRef(null);
   const navigate = useNavigate();
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -40,7 +41,7 @@ const Header = ({ onCategorySelect }) => {
   };
 
   const handleSearchSubmit = () => {
-    if (searchKeyword.trim() !== "") {
+    if (searchKeyword.trim() !== '') {
       navigate(`/product?search=${searchKeyword}`);
     }
   };
@@ -105,21 +106,6 @@ const Header = ({ onCategorySelect }) => {
       fetchCartItems();
     }
   }, [isCartOpen]);
-
-  // Uncomment and use if necessary for WebSocket chat integration
-  // useEffect(() => {
-  //   const script = document.createElement('script');
-  //   script.type = 'text/javascript';
-  //   script.id = 'hs-script-loader';
-  //   script.async = true;
-  //   script.defer = true;
-  //   script.src = '//js-na1.hs-scripts.com/46686268.js';
-  //   document.head.appendChild(script);
-
-  //   return () => {
-  //     document.head.removeChild(script);
-  //   };
-  // }, []);
 
   const formatCurrency = (value) => {
     return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
@@ -192,6 +178,13 @@ const Header = ({ onCategorySelect }) => {
               </span>
             )}
           </div>
+          {/* User Icon */}
+          <FontAwesomeIcon
+            icon={faUser}
+            size="lg"
+            className="cursor-pointer"
+            onClick={() => navigate('/login')}
+          />
         </div>
       </Toolbar>
       <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
